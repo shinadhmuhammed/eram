@@ -1,51 +1,65 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    email:
-    {
-        type: String,
-        required: true,
-        unique: true
-    },
-    phone:
-    {
-        type: String,
-        unique: true
-    },
-    passwordHash: String,
-    accountStatus:
-    {
-        type: String,
-        enum: ['active', 'suspended', 'deleted'],
-        default: 'active'
-    },
-    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }],
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  fullName: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  phone: {
+    type: String,
+    unique: true,
+  },
+  passwordHash: String,
+  accountStatus: {
+    type: String,
+    enum: ["active", "suspended", "deleted"],
+    default: "active",
+  },
+  role: {
+    type: String,
+    required: true,
+    enum: ["admin", "recruiter", "client", "candidate", "employee"],
+  },
 
-    organization:
+  // Candidate/Employee fields
+  dob: Date,
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    country: String,
+    postalCode: String,
+  },
+  qualifications: [
     {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Organization'
+      degree: String,
+      institution: String,
+      year: Number,
     },
-    lastLogin: Date,
-    failedLoginAttempts:
-    {
-        type: Number,
-        default: 0
-    },
-    profileCompleted:
-    {
-        type: Boolean,
-        default: false
-    },
-    twoFactorEnabled:
-    {
-        type: Boolean,
-        default: false
-    }
-}, {
-    discriminatorKey: 'userType',
-    timestamps: true
+  ],
+  skills: [String],
+  resumeUrl: String,
+  experienceYears: Number,
+
+  // Client||Company fields
+  companyName: String,
+  companyWebsite: String,
+
+  isActive: { type: Boolean, default: true },
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;
