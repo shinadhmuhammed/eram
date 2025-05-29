@@ -15,7 +15,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use("/api/users", userRouter);
-app.use("/api/admin", userRouter);
+// app.use("/api/admin", userRouter);
 
 connectDB()
   .then(() => {
