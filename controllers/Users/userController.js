@@ -8,8 +8,10 @@ const sendMail = require("../../utils/mailer");
 const OTP = require("../../models/OTPModel");
 
 const register = async (req, res) => {
+  console.log('register')
   try {
     const { firstName,lastName,fullName,role, email,phone,cPassword } = req.body
+    console.log(req.body,'hi bodyyyy')
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -18,9 +20,10 @@ const register = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(cPassword, salt);
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await sendMail(email,fullName,otp)
+    await sendMail(email,firstName,otp)
 
     await OTP.create({
       firstName,
