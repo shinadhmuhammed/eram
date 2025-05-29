@@ -9,8 +9,7 @@ const OTP = require("../../models/OTPModel");
 
 const register = async (req, res) => {
   try {
-    const { firstName,lastName,fullName,role, email,phone,cPassword } = req.body;
-    console.log(req.body,'hi bodyyyyyy')
+    const { firstName,lastName,fullName,role, email,phone,cPassword } = req.body
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -36,7 +35,6 @@ const register = async (req, res) => {
 
     res.status(200).json({ message: "OTP sent successfully" });
 
-    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
