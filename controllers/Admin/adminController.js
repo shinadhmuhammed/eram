@@ -1,7 +1,6 @@
 
 
 const adminLogin = async (req,res) =>{
-    console.log('hihihhihii-=-=')
     try {
         const {email,password} = req.body
         console.log(req.body,'hihihi')
