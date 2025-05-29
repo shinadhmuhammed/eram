@@ -6,7 +6,7 @@ const otpSchema = new mongoose.Schema({
   fullName: String,
   role: {
     type: String,
-    enum: ["admin", "recruiter", "client", "candidate", "employee"],
+    enum: ["admin", "recruiter", "super_admin", "candidate", "employee"],
   },
   email: { type: String, required: true },
   phone: String,
@@ -15,7 +15,7 @@ const otpSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 300, 
+    expires: 180, 
   },
 });
 
