@@ -10,6 +10,7 @@ const OTP = require("../../models/OTPModel");
 const register = async (req, res) => {
   try {
     const { firstName,lastName,fullName,role, email,phone,cPassword } = req.body;
+    console.log(req.body,'hi bodyyyyyy')
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
