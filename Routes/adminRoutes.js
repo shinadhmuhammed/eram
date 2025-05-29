@@ -1,6 +1,12 @@
 const express = require("express");
-const router = express.Router();
+const { createBranch,getBranch } = require('../controllers/Branch/branchController')
 
+const adminroute = express.Router();
+
+
+adminroute.get('/branch',getBranch)
+
+adminroute.post('/branch',createBranch)
 
 
 
