@@ -16,6 +16,7 @@ router.get("/getDashboardData", authenticateToken, getDashboardData);
 router.post("/Register", register);
 router.post("/verifyOtp", verifyOtp);
 router.post("/Login", login);
+
 router.post("/resend-otp", resendOtp);
 
 module.exports = router;
