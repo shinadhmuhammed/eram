@@ -34,7 +34,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         enum: ["admin", "recruiter", "super_admin", "candidate", "employee"],
     },
-
+    admin:{
+         type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
     dob: Date,
     address: {
         street: String,
@@ -61,7 +64,22 @@ const userSchema = new mongoose.Schema({
     // Client||Company fields
     companyName: String,
     companyWebsite: String,
-
+    
+    Category:{
+        type:String
+    },
+    website_url:{
+        type:String
+    },
+    description:{
+        type:String
+    },
+    employees_count:{
+        type:String
+    },
+    partnership:{
+        type:String
+    },
     isActive: { type: Boolean, default: true },
 });
 
