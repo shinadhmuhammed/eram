@@ -14,11 +14,6 @@ const branchSchema = new mongoose.Schema({
     branch_phoneno : String,
     branch_email: String,
   },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
   isActive: {
     type: Boolean,
     default: true,
