@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const sendMail = require("../../utils/mailer");
-const OTP = require("../../models/otpModel");
+const OTP = require("../../models/OTPModel");
 
 const register = async (req, res) => {
   try {
@@ -22,7 +22,7 @@ const register = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    let subject = fullName
+    let subject = "ERAM OTP Verification"
     const text = `Hi ${firstName},\n\nYour OTP is: ${otp}\nThis OTP will expire in 3 minutes.\n\nThank you,\nERAM Team`;
     await sendMail(email, subject,text);
 
@@ -93,7 +93,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        name: user.name,
+        name: user.fullName,
         email: user.email,
         role: user.role,
       },
@@ -105,8 +105,9 @@ const login = async (req, res) => {
       token,
       user: {
         email: user.email,
-        name: user.name,
-        roles: user.roles,
+        name: user.fullName,
+        
+        roles: user.role,
       },
     });
   } catch (error) {
@@ -114,6 +115,36 @@ const login = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+const resendOtp = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const otpRecord = await OTP.findOne({ email });
+
+    if (!otpRecord) {
+      return res.status(404).json({ message: "No OTP request found for this email" });
+    }
+
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    otpRecord.otp = newOtp;
+    otpRecord.createdAt = new Date(); 
+    await otpRecord.save();
+
+    const subject =  "ERAM OTP Verification";
+    const text = `Hi ${otpRecord.firstName},\n\nYour new OTP is: ${newOtp}\nIt will expire in 3 minutes.\n\nThank you,\nERAM Team`;
+    await sendMail(email, subject, text);
+
+    res.status(200).json({ message: "OTP resent successfully" });
+  } catch (err) {
+    console.error("Error resending OTP:", err);
+    res.status(500).json({ message: "Server error while resending OTP" });
+  }
+};
+
+
 
 const getDashboardData = async (req, res) => {
   try {
@@ -127,6 +158,7 @@ const getDashboardData = async (req, res) => {
 module.exports = {
   register,
   verifyOtp,
+  resendOtp,
   login,
   getDashboardData,
 };
