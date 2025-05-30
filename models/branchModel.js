@@ -12,11 +12,6 @@ const branchSchema = new mongoose.Schema({
     country: String,
     postalCode: String,
   },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
   isActive: {
     type: Boolean,
     default: true,
