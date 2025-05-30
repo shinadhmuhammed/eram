@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const sendMail = require("../../utils/mailer");
-const OTP = require("../../models/otpModel");
+const OTP = require("../../models/OTPModel");
 
 const register = async (req, res) => {
   try {
@@ -93,7 +93,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        name: user.name,
+        name: user.fullName,
         email: user.email,
         role: user.role,
       },
@@ -105,8 +105,8 @@ const login = async (req, res) => {
       token,
       user: {
         email: user.email,
-        name: user.name,
-        roles: user.roles,
+        name: user.fullName,
+        roles: user.role,
       },
     });
   } catch (error) {
