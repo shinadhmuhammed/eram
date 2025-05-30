@@ -11,6 +11,8 @@ const branchSchema = new mongoose.Schema({
     state: String,
     country: String,
     postalCode: String,
+    branch_phoneno : String,
+    branch_email: String,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -21,6 +23,29 @@ const branchSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  description: {
+    type: String
+  },
+  brand_logo: {
+    type: String
+  },
+  home: {
+    title: String,
+    bannerImage: String,
+    herosectionOne: String,
+  },
+  about: {
+    title: String,
+    description: String,
+  },
+  services: [{
+    name: String,
+    price: Number,
+  }],
+  contact: {
+    email: String,
+    phone: String,
+  }
 }, { timestamps: true });
 
 const Branch = mongoose.model("Branch", branchSchema);

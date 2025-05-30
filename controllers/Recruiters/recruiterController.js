@@ -1,7 +1,7 @@
 
 const addRecruiter = async (req, res) => {
     try {
-        const { companyName, location, email, phoneno, category, website_url, status, employees_count, password, adminId, branchId } = req.body;
+        const { companyName, location, email, phoneno, category, website_url, status, employees_count, password, adminId, branchId,role } = req.body;
         if (!companyName || !location || !email || !phoneno || !category || !website_url || !employees_count || !password || !adminId || !branchId) {
             return res.status(400).json({ message: 'missing required fields!' })
         }
@@ -21,6 +21,7 @@ const addRecruiter = async (req, res) => {
             phoneno,
             email,
             category,
+            role,
             website_url,
             branch: branchId,
             status,
