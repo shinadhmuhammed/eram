@@ -1,8 +1,8 @@
 
 const addRecruiter = async (req, res) => {
     try {
-        const { companyName, location, email, phoneno, category, website_url, status, employees_count, password,adminId } = req.body;
-        if (!companyName || !location || !email || !phoneno || !category || !website_url || !employees_count || !password) {
+        const { companyName, location, email, phoneno, category, website_url, status, employees_count, password, adminId, branchId } = req.body;
+        if (!companyName || !location || !email || !phoneno || !category || !website_url || !employees_count || !password || !adminId || !branchId) {
             return res.status(400).json({ message: 'missing required fields!' })
         }
 
@@ -10,8 +10,8 @@ const addRecruiter = async (req, res) => {
         if (userExist) {
             return res.status(500).json({ message: "user already exists with the same email!" })
         }
-        
-         const salt = await bcrypt.genSalt(10);
+
+        const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newRecruiter = new User({
@@ -26,12 +26,12 @@ const addRecruiter = async (req, res) => {
             status,
             employees_count,
             hashedPassword,
-            admin:adminId
+            admin: adminId
         })
 
         await newRecruiter.save()
 
-        res.status(201).json({ message: "User registered successfully" , newRecruiter});
+        res.status(201).json({ message: "User registered successfully", newRecruiter });
 
 
     }
@@ -40,6 +40,10 @@ const addRecruiter = async (req, res) => {
         return res.status(500).json({ message: error.message })
     }
 }
+
+
+
+
 
 
 

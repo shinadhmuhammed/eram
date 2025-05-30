@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const sendMail = require("../../utils/mailer");
-const OTP = require("../../models/OTPModel");
+const OTP = require("../../models/otpModel");
 
 const register = async (req, res) => {
   try {
