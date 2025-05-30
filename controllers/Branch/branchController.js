@@ -2,13 +2,14 @@ const Branch = require('../../models/branchModel')
 
 const createBranch = async (req, res) => {
     try {
-        const { name, location } = req.body;
+        const { name, location, isActive } = req.body;
         if (!name || !location) {
             return res.status(400).json({ message: "missing required fields!!" })
         }
         const newBranch = new Branch({
             name,
-            location
+            location,
+            isActive
         })
 
         await newBranch.save();

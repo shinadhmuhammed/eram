@@ -47,7 +47,6 @@ const getAllAdmin = async(req,res) =>{
 
 
 module.exports = {
-    adminLogin,
     addAdmin,
     getAllAdmin
 }
