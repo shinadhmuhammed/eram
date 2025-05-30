@@ -8,10 +8,9 @@ const sendMail = require("../../utils/mailer");
 const OTP = require("../../models/otpModel");
 
 const register = async (req, res) => {
-  console.log('register')
   try {
-    const { firstName,lastName,fullName,role, email,phone,cPassword } = req.body;
-    console.log(req.body,'body')
+    const { firstName, lastName, fullName, role, email, phone, cPassword } =
+      req.body;
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -20,9 +19,12 @@ const register = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(cPassword, salt);
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await sendMail(email,firstName,otp)
+    let subject = fullName
+    const text = `Hi ${firstName},\n\nYour OTP is: ${otp}\nThis OTP will expire in 3 minutes.\n\nThank you,\nERAM Team`;
+    await sendMail(email, subject,text);
 
     await OTP.create({
       firstName,
@@ -36,8 +38,6 @@ const register = async (req, res) => {
     });
 
     res.status(200).json({ message: "OTP sent successfully" });
-
-    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -54,7 +54,8 @@ const verifyOtp = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    const { firstName, lastName, fullName, role, phone, passwordHash } = otpRecord;
+    const { firstName, lastName, fullName, role, phone, passwordHash } =
+      otpRecord;
 
     const newUser = new User({
       firstName,
@@ -67,7 +68,7 @@ const verifyOtp = async (req, res) => {
     });
 
     await newUser.save();
-    await OTP.deleteOne({ email }); 
+    await OTP.deleteOne({ email });
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
@@ -114,9 +115,6 @@ const login = async (req, res) => {
   }
 };
 
-
-
-
 const getDashboardData = async (req, res) => {
   try {
     console.log("User info from token:", req.user);
@@ -128,8 +126,7 @@ const getDashboardData = async (req, res) => {
 
 module.exports = {
   register,
-   verifyOtp,
+  verifyOtp,
   login,
   getDashboardData,
- 
 };
