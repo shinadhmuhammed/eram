@@ -7,6 +7,7 @@ const branchSchema = new mongoose.Schema({
   },
   branchCode: {
     type: String,
+    required:true
   },
   location: {
     street: String,
@@ -26,6 +27,7 @@ const branchSchema = new mongoose.Schema({
   },
   brand_logo: {
     type: String,
+    required:true
   },
   home: {
     title: String,
