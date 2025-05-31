@@ -174,7 +174,7 @@ const editAdmin = async (req, res) => {
 };
 
 
-const deleteAdmin = async (req, res) => {
+const disableAdmin = async (req, res) => {
   try {
     const { adminId } = req.params;
 
@@ -183,7 +183,7 @@ const deleteAdmin = async (req, res) => {
       return res.status(404).json({ message: "Admin not found" });
     }
 
-    adminUser.accountStatus = "deleted";
+    adminUser.accountStatus = "inActive";
     await adminUser.save();
 
     return res.status(200).json({ message: "Admin marked as deleted" });
@@ -200,5 +200,5 @@ module.exports = {
   createWorkOrder,
   addPipeline,
   editAdmin,
-  deleteAdmin
+  disableAdmin
 };
