@@ -166,7 +166,7 @@ const editAdmin = async (req, res) => {
     }
     await adminUser.save();
 
-    return res.status(200).json({ message: "Admin updated successfully" });
+    return res.status(200).json({ message: "Admin updated successfully" ,data:adminUser});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
@@ -186,7 +186,7 @@ const disableAdmin = async (req, res) => {
     adminUser.accountStatus = "inActive";
     await adminUser.save();
 
-    return res.status(200).json({ message: "Admin marked as deleted" });
+    return res.status(200).json({ message: "Admin marked as deleted",data:adminUser });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
