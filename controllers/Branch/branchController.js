@@ -6,7 +6,7 @@ const createBranch = async (req, res) => {
             return res.status(400).json({ message: err.message });
         }
         try {
-            const { name, location, isActive = true, description, home, about, services, contactus } = req.body;
+            const { branchName, branchCode, isActive = true, location,description} = req.body;
 
             const brand_logo = req.file ? req.file.filename : null;
 
