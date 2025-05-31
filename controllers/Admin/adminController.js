@@ -1,3 +1,4 @@
+const Pipeline = require("../../models/pipelineModel");
 const User = require("../../models/userModel");
 const Workorder = require("../../models/workorderModel");
 
@@ -9,14 +10,14 @@ const addAdmin = async (req, res) => {
       fullName,
       role,
       email,
+      branchId,
       phone,
       cPassword,
-      branchId,
     } = req.body;
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "Admin already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -52,7 +53,7 @@ const getAllAdmin = async (req, res) => {
   }
 };
 
-const createWorkFlow = async (req, res) => {
+const createWorkOrder = async (req, res) => {
   try {
     const {
       title,
@@ -75,11 +76,10 @@ const createWorkFlow = async (req, res) => {
       branchId,
     } = req.body;
 
-
     const newWorkorder = await Workorder.create({
       title,
       jobCode,
-      workplace: workPlace, 
+      workplace: workPlace,
       officeLocation,
       description,
       jobFunction,
@@ -93,22 +93,51 @@ const createWorkFlow = async (req, res) => {
       startDate,
       endDate,
       deadlineDate,
-      assignedRecruiters: assignedId, // array of recruiter
-      branch: branchId 
+      assignedRecruiters: assignedId,
+      branch: branchId,
     });
 
     res.status(201).json({
       message: "Work order created successfully",
-      data: newWorkorder
+      data: newWorkorder,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: "Server error while creating work order" });
+  }
+};
+
+const addPipeline = async (req, res) => {
+  const { name, stages } = req.body;
+  const createdBy = req.user.id;
+
+  try {
+    if (!name || !Array.isArray(stages) || stages.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Pipeline name and at least one stage are required" });
+    }
+
+    const newPipeLine = new Pipeline({
+      name,
+      stages,
+      createdBy,
+    });
+
+    await newPipeLine.save();
+
+    return res
+      .status(200)
+      .json({ message: "Pipeline added succesfully..!", data: newPipeLine });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
 module.exports = {
   addAdmin,
   getAllAdmin,
-  createWorkFlow,
+  createWorkOrder,
+  addPipeline,
 };

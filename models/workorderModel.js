@@ -74,5 +74,14 @@ const workorderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+workorderSchema.index({ branch: 1 });
+workorderSchema.index({ pipeline: 1 });
+workorderSchema.index({ assignedRecruiters: 1 });
+workorderSchema.index({ workOrderStatus: 1 });
+workorderSchema.index({ branch: 1, workOrderStatus: 1 });
+workorderSchema.index({ startDate: 1 });
+workorderSchema.index({ deadlineDate: 1 });
+
+
 const Workorder = mongoose.model("Workorder", workorderSchema);
 module.exports = Workorder;
