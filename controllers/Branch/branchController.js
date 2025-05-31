@@ -82,7 +82,60 @@ const getBranch = async (req, res) => {
   }
 };
 
+
+const editBranch = async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    try {
+      const { branchId } = req.params; 
+      const {
+        name,
+        branchCode,
+        isActive,
+        location,
+        description,
+        home,
+        about,
+        services,
+        contact,
+      } = req.body;
+
+      const branch = await Branch.findById(branchId);
+      if (!branch) {
+        return res.status(404).json({ message: "Branch not found" });
+      }
+
+      if (name) branch.name = name;
+      if (branchCode) branch.branchCode = branchCode;
+      if (typeof isActive !== "undefined") branch.isActive = isActive;
+      if (location) branch.location = location;
+      if (description) branch.description = description;
+
+      if (req.file) {
+        branch.brand_logo = req.file.filename; 
+      }
+
+      if (home) branch.home = home;
+      if (about) branch.about = about;
+      if (services) branch.services = services;
+      if (contact) branch.contact = contact;
+
+      await branch.save();
+
+      return res.status(200).json({ message: "Branch updated successfully", data: branch });
+    } catch (error) {
+      console.error("Error editing branch:", error.message);
+      return res.status(500).json({ message: "Server error while editing branch", error: error.message });
+    }
+  });
+};
+
+
 module.exports = {
   createBranch,
   getBranch,
+  editBranch
 };

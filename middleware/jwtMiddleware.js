@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
+    console.log("JWT middleware called"); 
   const authHeader = req.headers['authorization'];
+  console.log(authHeader,'hi header -=-=')
 
   const token = authHeader && authHeader.split(' ')[1];
 

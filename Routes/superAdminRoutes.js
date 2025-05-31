@@ -2,6 +2,7 @@ const express = require("express");
 const {
   createBranch,
   getBranch,
+  editBranch,
 } = require("../controllers/Branch/branchController");
 const {
   getAllAdmin,
@@ -10,18 +11,20 @@ const {
   disableAdmin,
   getAdminById,
 } = require("../controllers/Admin/adminController");
+const authenticateToken = require("../middleware/jwtMiddleware");
 
 const superadminroute = express.Router();
 
-superadminroute.get("/branch", getBranch);
+superadminroute.get("/branch",authenticateToken, getBranch);
 superadminroute.get("/admin", getAllAdmin);
-superadminroute.get("/admin", getAdminById);
+superadminroute.get("/adminId/:adminId", getAdminById);
 
 superadminroute.post("/branch", createBranch);
 superadminroute.post("/admin", addAdmin);
 
 superadminroute.patch("/admin", disableAdmin);
 
-superadminroute.put("/admin", editAdmin);
+superadminroute.put("/admin/:adminId", editAdmin);
+superadminroute.put("/branch", editBranch );
 
 module.exports = superadminroute;
