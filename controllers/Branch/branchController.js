@@ -1,4 +1,5 @@
 const Branch = require("../../models/branchModel");
+const { upload } = require('../../utils/multer')
 
 const createBranch = async (req, res) => {
   upload(req, res, async (err) => {
