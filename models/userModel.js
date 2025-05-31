@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
   passwordHash: String,
   accountStatus: {
     type: String,
-    enum: ["active", "suspended", "deleted"],
+    enum: ["active", "suspended", "deleted","inActive"],
     default: "active",
   },
   role: {

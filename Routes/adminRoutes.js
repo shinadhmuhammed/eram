@@ -1,6 +1,6 @@
 const express = require("express");
 const { createBranch,getBranch } = require('../controllers/Branch/branchController')
-const { getAllAdmin,addAdmin, createWorkOrder, addPipeline } = require('../controllers/Admin/adminController')
+const { getAllAdmin,addAdmin, createWorkOrder, addPipeline, editAdmin, deleteAdmin } = require('../controllers/Admin/adminController')
 
 const adminroute = express.Router();
 
@@ -13,6 +13,11 @@ adminroute.post('/admin',addAdmin)
 adminroute.post('/WorkFlow',createWorkOrder )
 adminroute.post('/addPipeline',addPipeline )
 
+
+adminroute.put("/admin/:adminId",editAdmin)
+
+
+adminroute.delete("/admin/:adminId",deleteAdmin)
 
 
 

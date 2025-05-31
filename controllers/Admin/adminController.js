@@ -136,9 +136,69 @@ const addPipeline = async (req, res) => {
   }
 };
 
+const editAdmin = async (req, res) => {
+  const adminId = req.params;
+  const {
+    firstName,
+    lastName,
+    fullName,
+    email,
+    phone,
+    password,
+    accountStatus,
+  } = req.body;
+
+  try {
+    const adminUser = await User.findOne({ _id: adminId });
+
+    if (firstName) adminUser.firstName = firstName;
+    if (lastName) adminUser.lastName = lastName;
+    if (fullName) adminUser.fullName = fullName;
+    if (email) adminUser.email = email;
+    if (phone) adminUser.phone = phone;
+    if (password) adminUser.password = password;
+    if (accountStatus) adminUser.accountStatus = accountStatus;
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashed = await bcrypt.hash(password, salt);
+      adminUser.passwordHash = hashed;
+    }
+    await adminUser.save();
+
+    return res.status(200).json({ message: "Admin updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+const deleteAdmin = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+
+    const adminUser = await User.findOne({ _id: adminId, role: "admin" });
+    if (!adminUser) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    adminUser.accountStatus = "deleted";
+    await adminUser.save();
+
+    return res.status(200).json({ message: "Admin marked as deleted" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 module.exports = {
   addAdmin,
   getAllAdmin,
   createWorkOrder,
   addPipeline,
+  editAdmin,
+  deleteAdmin
 };
