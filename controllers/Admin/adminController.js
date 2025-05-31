@@ -197,7 +197,7 @@ const getAdminById = async (req, res) => {
   try {
     const { adminId } = req.params;
 
-    const adminUser = await User.findOne({ _id: adminId});
+    const adminUser = await User.findOne({ _id: adminId }).populate("branch");
 
     if (!adminUser) {
       return res.status(404).json({ message: "Admin not found" });
@@ -205,10 +205,11 @@ const getAdminById = async (req, res) => {
 
     return res.status(200).json({ admin: adminUser });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching admin:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 

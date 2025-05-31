@@ -15,7 +15,7 @@ const authenticateToken = require("../middleware/jwtMiddleware");
 
 const superadminroute = express.Router();
 
-superadminroute.get("/branch",authenticateToken, getBranch);
+superadminroute.get("/branch", getBranch);
 superadminroute.get("/admin", getAllAdmin);
 superadminroute.get("/adminId/:adminId", getAdminById);
 
