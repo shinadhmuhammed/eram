@@ -13,7 +13,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'badminton',
+    folder: 'eram',
     allowed_formats: ['jpg', 'jpeg', 'png'],
     public_id: (req, file) => {
       const fileName = Date.now() + path.extname(file.originalname);
