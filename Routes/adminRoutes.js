@@ -14,4 +14,4 @@ adminroute.post('/admin',addAdmin)
 
 
 
-module.exports = router;
+module.exports = adminroute;
