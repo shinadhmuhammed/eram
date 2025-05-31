@@ -1,6 +1,7 @@
 const Pipeline = require("../../models/pipelineModel");
 const User = require("../../models/userModel");
 const Workorder = require("../../models/workorderModel");
+const bcrypt = require("bcrypt");
 
 const addAdmin = async (req, res) => {
   try {
