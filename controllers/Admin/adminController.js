@@ -193,6 +193,24 @@ const disableAdmin = async (req, res) => {
   }
 };
 
+const getAdminById = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+
+    const adminUser = await User.findOne({ _id: adminId});
+
+    if (!adminUser) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    return res.status(200).json({ admin: adminUser });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
 module.exports = {
   addAdmin,
@@ -200,5 +218,6 @@ module.exports = {
   createWorkOrder,
   addPipeline,
   editAdmin,
-  disableAdmin
+  disableAdmin,
+  getAdminById
 };
