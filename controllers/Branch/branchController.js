@@ -24,11 +24,11 @@ const createBranch = async (req, res) => {
       if (
         !name ||
         !location ||
-        !description ||
-        !home ||
-        !about ||
-        !services ||
-        !contact
+        !description
+        // !home ||
+        // !about ||
+        // !services ||
+        // !contact
       ) {
         return res.status(400).json({
           message:
@@ -43,20 +43,20 @@ const createBranch = async (req, res) => {
         isActive,
         description,
         brand_logo,
-        home: {
-          title: home.title || "",
-          bannerImage: home.bannerImage || "",
-          herosectionOne: home.herosectionOne || "",
-        },
-        about: {
-          title: about.title || "",
-          description: about.description || "",
-        },
-        services: services || [],
-        contact: {
-          email: contact.email || "",
-          phone: contact.phone || "",
-        },
+        // home: {
+        //   title: home.title || "",
+        //   bannerImage: home.bannerImage || "",
+        //   herosectionOne: home.herosectionOne || "",
+        // },
+        // about: {
+        //   title: about.title || "",
+        //   description: about.description || "",
+        // },
+        // services: services || [],
+        // contact: {
+        //   email: contact.email || "",
+        //   phone: contact.phone || "",
+        // },
       });
 
       await newBranch.save();
