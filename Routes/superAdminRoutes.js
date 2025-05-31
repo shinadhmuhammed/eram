@@ -9,7 +9,7 @@ superadminroute.get('/admin',getAllAdmin)
 
 superadminroute.post('/branch',createBranch)
 superadminroute.post('/admin',addAdmin)
-adminroute.post("/admin/:adminId",disableAdmin)
+superadminroute.post("/admin/:adminId",disableAdmin)
 
 
 
