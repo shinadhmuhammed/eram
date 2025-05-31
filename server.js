@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./connections/dbConnection");
 const userRouter = require("./Routes/userRoutes");
+const  superadminroute = require('./Routes/superAdminRoutes')
 const port = 5000 || process.env.port;
 dotenv.config();
 
@@ -16,7 +17,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use("/api/users", userRouter);
-// app.use("/api/admin", userRouter);
+app.use('/api/super-admin',superadminroute)
 
 connectDB()
   .then(() => {
