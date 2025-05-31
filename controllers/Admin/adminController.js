@@ -137,7 +137,7 @@ const addPipeline = async (req, res) => {
 };
 
 const editAdmin = async (req, res) => {
-  const adminId = req.params;
+  const { adminId } = req.body;
   const {
     firstName,
     lastName,
@@ -176,7 +176,7 @@ const editAdmin = async (req, res) => {
 
 const disableAdmin = async (req, res) => {
   try {
-    const { adminId } = req.params;
+    const { adminId } = req.body;
 
     const adminUser = await User.findOne({ _id: adminId, role: "admin" });
     if (!adminUser) {
@@ -195,7 +195,7 @@ const disableAdmin = async (req, res) => {
 
 const getAdminById = async (req, res) => {
   try {
-    const { adminId } = req.params;
+    const { adminId } = req.body;
 
     const adminUser = await User.findOne({ _id: adminId});
 

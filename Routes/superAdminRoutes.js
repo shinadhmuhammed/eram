@@ -15,13 +15,13 @@ const superadminroute = express.Router();
 
 superadminroute.get("/branch", getBranch);
 superadminroute.get("/admin", getAllAdmin);
-superadminroute.get("/admin/:adminId", getAdminById);
+superadminroute.get("/admin", getAdminById);
 
 superadminroute.post("/branch", createBranch);
 superadminroute.post("/admin", addAdmin);
 
-superadminroute.patch("/admin/:adminId", disableAdmin);
+superadminroute.patch("/admin", disableAdmin);
 
-superadminroute.put("/admin/:adminId", editAdmin);
+superadminroute.put("/admin", editAdmin);
 
 module.exports = superadminroute;
