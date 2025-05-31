@@ -12,12 +12,13 @@ adminroute.post('/branch',createBranch)
 adminroute.post('/admin',addAdmin)
 adminroute.post('/WorkFlow',createWorkOrder )
 adminroute.post('/addPipeline',addPipeline )
+adminroute.post("/admin/:adminId",disableAdmin)
 
 
 adminroute.put("/admin/:adminId",editAdmin)
 
 
-adminroute.delete("/admin/:adminId",disableAdmin)
+
 
 
 
