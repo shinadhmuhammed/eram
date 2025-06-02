@@ -97,7 +97,8 @@ const login = async (req, res) => {
         email: user.email,
         role: user.role,
       },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+       { expiresIn: "7d" }
     );
 
     if (user.role === "super_admin") {
@@ -165,6 +166,7 @@ const verifyAdminLoginOtp = async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET,
+       { expiresIn: "7d" }
     );
 
     res.status(201).json({
@@ -211,9 +213,8 @@ const resendOtp = async (req, res) => {
   }
 };
 
-
 const requestUpdateProfile = async (req, res) => {
-  const userEmail = req.user.email; 
+  const userEmail = req.user.email;
   const { newEmail, password } = req.body;
 
   try {
@@ -229,8 +230,8 @@ const requestUpdateProfile = async (req, res) => {
     await OTP.deleteMany({ email: userEmail });
 
     await OTP.create({
-      email: userEmail,         
-      newEmail,               
+      email: userEmail,
+      newEmail,
       passwordHash: hashedPassword,
       otp,
     });
@@ -247,15 +248,14 @@ const requestUpdateProfile = async (req, res) => {
   }
 };
 
-
-
-
 const verifyUpdateProfile = async (req, res) => {
   const userEmail = req.user.email;
+  console.log(userEmail,'hi user email-=-=-=')
   const { otp } = req.body;
 
   try {
     const otpRecord = await OTP.findOne({ email: userEmail });
+    console.log(userEmail,'hi mail =-=-=-=',otpRecord)
     if (!otpRecord || otpRecord.otp !== otp) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
@@ -270,17 +270,26 @@ const verifyUpdateProfile = async (req, res) => {
     await user.save();
 
     await OTP.deleteOne({ email: userEmail });
+    const newToken = jwt.sign(
+      { email: user.email, id: user._id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-    res.status(200).json({ message: "Profile updated successfully" });
+    res.status(200).json({
+      message: "Profile updated successfully",
+      token: newToken,
+      updatedUser: {
+        email: user.email,
+        role: user.role,
+        fullName: user.fullName,
+      },
+    });
   } catch (err) {
     console.error("Error in verifyUpdateProfile:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
-
 
 module.exports = {
   register,
@@ -289,5 +298,5 @@ module.exports = {
   resendOtp,
   login,
   requestUpdateProfile,
-  verifyUpdateProfile
+  verifyUpdateProfile,
 };

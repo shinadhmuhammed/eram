@@ -230,7 +230,8 @@ const disableAdmin = async (req, res) => {
       return res.status(404).json({ message: "Admin not found" });
     }
 
-    adminUser.accountStatus = "inActive";
+    adminUser.accountStatus =
+      adminUser.accountStatus === "active" ? "inActive" : "active";
     await adminUser.save();
 
     return res
