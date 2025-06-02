@@ -90,7 +90,7 @@ const login = async (req, res) => {
       return res.status(403).json({ message: "Invalid Password" });
     }
 
-        const token = jwt.sign(
+    const token = jwt.sign(
       {
         id: user._id,
         name: user.fullName,
@@ -126,7 +126,6 @@ const login = async (req, res) => {
           "OTP sent to super_admin. Please verify OTP to complete login.",
         requireOtp: true,
         email: user.email,
-        token
       });
     }
 
@@ -154,18 +153,29 @@ const verifyAdminLoginOtp = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    if (otpRecord.otp === otp) {
-      await OTP.deleteOne({ email });
-      const user = await User.findOne({ email });
-      res.status(201).json({
-        message: "Admin OTP Verification done successfully...!",
-        user: {
-          email: user.email,
-          name: user.fullName,
-          roles: user.role,
-        },
-      });
-    }
+    await OTP.deleteOne({ email });
+
+    const user = await User.findOne({ email });
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        name: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+    );
+
+    res.status(201).json({
+      message: "Admin OTP verification successful!",
+      token,
+      user: {
+        email: user.email,
+        name: user.fullName,
+        roles: user.role,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
