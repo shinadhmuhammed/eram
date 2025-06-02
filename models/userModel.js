@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
   passwordHash: String,
   accountStatus: {
     type: String,
-    enum: ["active","inActive"],
+    enum: ["active", "inActive"],
     default: "active",
   },
   role: {
@@ -77,7 +77,6 @@ const userSchema = new mongoose.Schema({
   partnership: {
     type: String,
   },
-  isActive: { type: Boolean, default: true },
 });
 
 const User = mongoose.model("User", userSchema);

@@ -11,8 +11,6 @@ const {
 const authenticateToken = require("../middleware/jwtMiddleware");
 const router = express.Router();
 
-router.get("/getDashboardData", authenticateToken, getDashboardData);
-
 
 router.post("/Register", register);
 router.post("/verifyOtp", verifyOtp);

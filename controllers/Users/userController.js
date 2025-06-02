@@ -211,14 +211,6 @@ const resendOtp = async (req, res) => {
   }
 };
 
-const getDashboardData = async (req, res) => {
-  try {
-    console.log("User info from token:", req.user);
-    return res.status(200).json({ message: "checking jwt verification...!" });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error..!" });
-  }
-};
 
 const requestUpdateProfile = async (req, res) => {
   const userEmail = req.user.email; 
@@ -264,7 +256,6 @@ const verifyUpdateProfile = async (req, res) => {
 
   try {
     const otpRecord = await OTP.findOne({ email: userEmail });
-    console.log(otpRecord,'hi otppp-=-=-=')
     if (!otpRecord || otpRecord.otp !== otp) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
@@ -297,7 +288,6 @@ module.exports = {
   verifyAdminLoginOtp,
   resendOtp,
   login,
-  getDashboardData,
   requestUpdateProfile,
   verifyUpdateProfile
 };
