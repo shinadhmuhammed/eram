@@ -13,6 +13,7 @@ const {
   getAdminById,
 } = require("../controllers/Admin/adminController");
 const authenticateToken = require("../middleware/jwtMiddleware");
+const { login, verifyAdminLoginOtp } = require("../controllers/Users/userController");
 
 const superadminroute = express.Router();
 
@@ -22,6 +23,8 @@ superadminroute.get("/adminId/:adminId", getAdminById);
 
 superadminroute.post("/branch", createBranch);
 superadminroute.post("/admin", addAdmin);
+superadminroute.post("/Login", login);
+superadminroute.post("/adminLoginverify", verifyAdminLoginOtp);
 
 superadminroute.patch("/admin", disableAdmin);
 
