@@ -272,7 +272,7 @@ const verifyUpdateProfile = async (req, res) => {
     await OTP.deleteOne({ email: userEmail });
     const newToken = jwt.sign(
       { email: user.email, id: user._id, role: user.role },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
