@@ -17,20 +17,20 @@ const { login, verifyAdminLoginOtp } = require("../controllers/Users/userControl
 
 const superadminroute = express.Router();
 
-superadminroute.get("/branch", getBranch);
-superadminroute.get("/admin", getAllAdmin);
-superadminroute.get("/adminId/:adminId", getAdminById);
+superadminroute.get("/branch", authenticateToken,getBranch);
+superadminroute.get("/admin",authenticateToken, getAllAdmin);
+superadminroute.get("/adminId/:adminId", authenticateToken,getAdminById);
 
-superadminroute.post("/branch", createBranch);
-superadminroute.post("/admin", addAdmin);
+superadminroute.post("/branch",authenticateToken, createBranch);
+superadminroute.post("/admin",authenticateToken, addAdmin);
 superadminroute.post("/Login", login);
 superadminroute.post("/adminLoginverify", verifyAdminLoginOtp);
 
-superadminroute.patch("/admin", disableAdmin);
+superadminroute.patch("/admin",authenticateToken, disableAdmin);
 
-superadminroute.put("/admin/:adminId", editAdmin);
-superadminroute.put("/branch", editBranch);
+superadminroute.put("/admin/:adminId",authenticateToken, editAdmin);
+superadminroute.put("/branch",authenticateToken, editBranch);
 
-superadminroute.delete("/branch/:branchId", deleteBranch);
+superadminroute.delete("/branch/:branchId",authenticateToken, deleteBranch);
 
 module.exports = superadminroute;

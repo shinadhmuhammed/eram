@@ -90,6 +90,16 @@ const login = async (req, res) => {
       return res.status(403).json({ message: "Invalid Password" });
     }
 
+        const token = jwt.sign(
+      {
+        id: user._id,
+        name: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET
+    );
+
     if (user.role === "super_admin") {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -116,18 +126,9 @@ const login = async (req, res) => {
           "OTP sent to super_admin. Please verify OTP to complete login.",
         requireOtp: true,
         email: user.email,
+        token
       });
     }
-
-    const token = jwt.sign(
-      {
-        id: user._id,
-        name: user.fullName,
-        email: user.email,
-        role: user.role,
-      },
-      process.env.JWT_SECRET
-    );
 
     res.status(200).json({
       message: "Login successful",
@@ -135,7 +136,6 @@ const login = async (req, res) => {
       user: {
         email: user.email,
         name: user.fullName,
-        
         roles: user.role,
       },
     });
