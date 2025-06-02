@@ -2,7 +2,7 @@ const Pipeline = require("../../models/pipelineModel");
 const User = require("../../models/userModel");
 const Workorder = require("../../models/workorderModel");
 const bcrypt = require("bcrypt");
-
+const mongoose = require("mongoose");
 const addAdmin = async (req, res) => {
   try {
     const {
@@ -59,7 +59,7 @@ const createWorkOrder = async (req, res) => {
     const {
       title,
       jobCode,
-      workplace, 
+      workplace,
       officeLocation,
       description,
       jobFunction,
@@ -86,7 +86,7 @@ const createWorkOrder = async (req, res) => {
     const newWorkorder = await Workorder.create({
       title,
       jobCode,
-      workplace, 
+      workplace,
       officeLocation,
       description,
       jobFunction,
@@ -131,7 +131,7 @@ const editWorkOrder = async (req, res) => {
     const updatedWorkorder = await Workorder.findByIdAndUpdate(
       id,
       { $set: req.body },
-      { new: true, runValidators: true } 
+      { new: true, runValidators: true }
     );
 
     if (!updatedWorkorder) {
@@ -147,7 +147,6 @@ const editWorkOrder = async (req, res) => {
     res.status(500).json({ message: "Server error while updating work order" });
   }
 };
-
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
@@ -196,7 +195,7 @@ const editAdmin = async (req, res) => {
       "fullName",
       "email",
       "phone",
-      "accountStatus"
+      "accountStatus",
     ];
 
     updatableFields.forEach((field) => {
@@ -268,5 +267,5 @@ module.exports = {
   editAdmin,
   disableAdmin,
   getAdminById,
-  editWorkOrder
+  editWorkOrder,
 };
