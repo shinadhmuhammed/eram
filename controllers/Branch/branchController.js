@@ -126,6 +126,8 @@ const editBranch = async (req, res) => {
   });
 };
 
+
+
 const deleteBranch = async(req,res) => {
   const branchId = req.params.branchId
   try {
@@ -142,5 +144,5 @@ module.exports = {
   createBranch,
   getBranch,
   editBranch,
-  deleteBranch
+  deleteBranch,
 };

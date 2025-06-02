@@ -9,6 +9,7 @@ const otpSchema = new mongoose.Schema({
     enum: ["admin", "recruiter", "super_admin", "candidate", "employee"],
   },
   email: { type: String, required: true },
+  newEmail: {type: String},
   phone: String,
   passwordHash: String,  
   otp: String,

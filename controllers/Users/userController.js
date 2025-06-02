@@ -220,6 +220,77 @@ const getDashboardData = async (req, res) => {
   }
 };
 
+const requestUpdateProfile = async (req, res) => {
+  const userEmail = req.user.email; 
+  const { newEmail, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await OTP.deleteMany({ email: userEmail });
+
+    await OTP.create({
+      email: userEmail,         
+      newEmail,               
+      passwordHash: hashedPassword,
+      otp,
+    });
+
+    const subject = "OTP for Profile Update";
+    const text = `Hi ${user.fullName},\n\nYour OTP is: ${otp}\nIt will expire in 3 minutes.\n\n- ERAM Team`;
+
+    await sendMail(userEmail, subject, text);
+
+    res.status(200).json({ message: "OTP sent for profile update" });
+  } catch (err) {
+    console.error("Error in requestUpdateProfile:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+const verifyUpdateProfile = async (req, res) => {
+  const userEmail = req.user.email;
+  const { otp } = req.body;
+
+  try {
+    const otpRecord = await OTP.findOne({ email: userEmail });
+    console.log(otpRecord,'hi otppp-=-=-=')
+    if (!otpRecord || otpRecord.otp !== otp) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    const { newEmail, passwordHash } = otpRecord;
+
+    const user = await User.findOne({ email: userEmail });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.email = newEmail;
+    user.passwordHash = passwordHash;
+    await user.save();
+
+    await OTP.deleteOne({ email: userEmail });
+
+    res.status(200).json({ message: "Profile updated successfully" });
+  } catch (err) {
+    console.error("Error in verifyUpdateProfile:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+
 module.exports = {
   register,
   verifyOtp,
@@ -227,4 +298,6 @@ module.exports = {
   resendOtp,
   login,
   getDashboardData,
+  requestUpdateProfile,
+  verifyUpdateProfile
 };
