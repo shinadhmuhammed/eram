@@ -3,6 +3,7 @@ const {
   createBranch,
   getBranch,
   editBranch,
+  deleteBranch,
 } = require("../controllers/Branch/branchController");
 const {
   getAllAdmin,
@@ -25,6 +26,8 @@ superadminroute.post("/admin", addAdmin);
 superadminroute.patch("/admin", disableAdmin);
 
 superadminroute.put("/admin/:adminId", editAdmin);
-superadminroute.put("/branch", editBranch );
+superadminroute.put("/branch", editBranch);
+
+superadminroute.delete("/branch/:branchId", deleteBranch);
 
 module.exports = superadminroute;

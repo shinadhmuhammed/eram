@@ -59,7 +59,7 @@ const createWorkOrder = async (req, res) => {
     const {
       title,
       jobCode,
-      workPlace,
+      workplace, 
       officeLocation,
       description,
       jobFunction,
@@ -75,12 +75,18 @@ const createWorkOrder = async (req, res) => {
       deadlineDate,
       assignedId,
       branchId,
+      requiredSkills,
+      jobRequirements,
+      numberOfCandidate,
+      isArchived,
+      benefits,
+      languagesRequired,
     } = req.body;
 
     const newWorkorder = await Workorder.create({
       title,
       jobCode,
-      workplace: workPlace,
+      workplace, 
       officeLocation,
       description,
       jobFunction,
@@ -96,6 +102,12 @@ const createWorkOrder = async (req, res) => {
       deadlineDate,
       assignedRecruiters: assignedId,
       branch: branchId,
+      requiredSkills,
+      jobRequirements,
+      numberOfCandidate,
+      isArchived,
+      benefits,
+      languagesRequired,
     });
 
     res.status(201).json({
@@ -103,10 +115,39 @@ const createWorkOrder = async (req, res) => {
       data: newWorkorder,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: "Server error while creating work order" });
   }
 };
+
+const editWorkOrder = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid work order ID" });
+  }
+
+  try {
+    const updatedWorkorder = await Workorder.findByIdAndUpdate(
+      id,
+      { $set: req.body },
+      { new: true, runValidators: true } 
+    );
+
+    if (!updatedWorkorder) {
+      return res.status(404).json({ message: "Work order not found" });
+    }
+
+    res.status(200).json({
+      message: "Work order updated successfully",
+      data: updatedWorkorder,
+    });
+  } catch (error) {
+    console.error("Error updating work order:", error);
+    res.status(500).json({ message: "Server error while updating work order" });
+  }
+};
+
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
@@ -138,41 +179,48 @@ const addPipeline = async (req, res) => {
 
 const editAdmin = async (req, res) => {
   const { adminId } = req.params;
-  const {
-    firstName,
-    lastName,
-    fullName,
-    email,
-    phone,
-    password,
-    accountStatus,
-  } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(adminId)) {
+    return res.status(400).json({ message: "Invalid admin ID" });
+  }
 
   try {
-    const adminUser = await User.findOne({ _id: adminId });
-
-    if (firstName) adminUser.firstName = firstName;
-    if (lastName) adminUser.lastName = lastName;
-    if (fullName) adminUser.fullName = fullName;
-    if (email) adminUser.email = email;
-    if (phone) adminUser.phone = phone;
-    if (password) adminUser.password = password;
-    if (accountStatus) adminUser.accountStatus = accountStatus;
-
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      const hashed = await bcrypt.hash(password, salt);
-      adminUser.passwordHash = hashed;
+    const adminUser = await User.findById(adminId);
+    if (!adminUser) {
+      return res.status(404).json({ message: "Admin not found" });
     }
+
+    const updatableFields = [
+      "firstName",
+      "lastName",
+      "fullName",
+      "email",
+      "phone",
+      "accountStatus"
+    ];
+
+    updatableFields.forEach((field) => {
+      if (typeof req.body[field] !== "undefined") {
+        adminUser[field] = req.body[field];
+      }
+    });
+
+    if (req.body.password) {
+      const salt = await bcrypt.genSalt(10);
+      adminUser.passwordHash = await bcrypt.hash(req.body.password, salt);
+    }
+
     await adminUser.save();
 
-    return res.status(200).json({ message: "Admin updated successfully" ,data:adminUser});
+    return res.status(200).json({
+      message: "Admin updated successfully",
+      data: adminUser,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating admin:", error.message);
     return res.status(500).json({ message: "Server error" });
   }
 };
-
 
 const disableAdmin = async (req, res) => {
   try {
@@ -186,7 +234,9 @@ const disableAdmin = async (req, res) => {
     adminUser.accountStatus = "inActive";
     await adminUser.save();
 
-    return res.status(200).json({ message: "Admin marked as deleted",data:adminUser });
+    return res
+      .status(200)
+      .json({ message: "Admin marked as deleted", data: adminUser });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
@@ -210,9 +260,6 @@ const getAdminById = async (req, res) => {
   }
 };
 
-
-
-
 module.exports = {
   addAdmin,
   getAllAdmin,
@@ -220,5 +267,6 @@ module.exports = {
   addPipeline,
   editAdmin,
   disableAdmin,
-  getAdminById
+  getAdminById,
+  editWorkOrder
 };

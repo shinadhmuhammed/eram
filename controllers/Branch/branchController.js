@@ -89,39 +89,32 @@ const editBranch = async (req, res) => {
       return res.status(400).json({ message: err.message });
     }
 
-    try {
-      const { branchId } = req.params; 
-      const {
-        name,
-        branchCode,
-        isActive,
-        location,
-        description,
-        home,
-        about,
-        services,
-        contact,
-      } = req.body;
+    const { branchId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(branchId)) {
+      return res.status(400).json({ message: "Invalid branch ID" });
+    }
+
+    try {
       const branch = await Branch.findById(branchId);
       if (!branch) {
         return res.status(404).json({ message: "Branch not found" });
       }
 
-      if (name) branch.name = name;
-      if (branchCode) branch.branchCode = branchCode;
-      if (typeof isActive !== "undefined") branch.isActive = isActive;
-      if (location) branch.location = location;
-      if (description) branch.description = description;
+      const updatableFields = [
+        "name", "branchCode", "isActive", "location", "description",
+        "home", "about", "services", "contact"
+      ];
+
+      updatableFields.forEach(field => {
+        if (typeof req.body[field] !== "undefined") {
+          branch[field] = req.body[field];
+        }
+      });
 
       if (req.file) {
-        branch.brand_logo = req.file.filename; 
+        branch.brand_logo = req.file.filename;
       }
-
-      if (home) branch.home = home;
-      if (about) branch.about = about;
-      if (services) branch.services = services;
-      if (contact) branch.contact = contact;
 
       await branch.save();
 
@@ -133,9 +126,21 @@ const editBranch = async (req, res) => {
   });
 };
 
+const deleteBranch = async(req,res) => {
+  const branchId = req.params.branchId
+  try {
+      const branchDelete = await Branch.findByIdAndDelete({_id:branchId})
+      return res.status(200).json({message:"Branch deleted successfully...!"})
+  } catch (error) {
+    console.error(error.message)
+      return res.status(500).json({ message: "Server error while deleting branch", error: error.message });
+  }
+}
+
 
 module.exports = {
   createBranch,
   getBranch,
-  editBranch
+  editBranch,
+  deleteBranch
 };

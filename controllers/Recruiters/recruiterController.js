@@ -33,8 +33,6 @@ const addRecruiter = async (req, res) => {
         await newRecruiter.save()
 
         res.status(201).json({ message: "User registered successfully", newRecruiter });
-
-
     }
     catch (error) {
         console.log(error.message)

@@ -54,6 +54,29 @@ const workorderSchema = new mongoose.Schema(
     deadlineDate: {
       type: Date,
     },
+    requiredSkills: {
+      type: [String],
+      default: [],
+    },
+    jobRequirements: {
+      type: String,
+    },
+    numberOfCandidate: {
+      type: Number,
+      default: 1,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    benefits: {
+      type: [String],
+      default: [],
+    },
+    languagesRequired: {
+      type: [String],
+      default: [],
+    },
     workOrderStatus: {
       type: String,
       enum: ["active", "suspended", "deleted"],
@@ -81,7 +104,6 @@ workorderSchema.index({ workOrderStatus: 1 });
 workorderSchema.index({ branch: 1, workOrderStatus: 1 });
 workorderSchema.index({ startDate: 1 });
 workorderSchema.index({ deadlineDate: 1 });
-
 
 const Workorder = mongoose.model("Workorder", workorderSchema);
 module.exports = Workorder;
