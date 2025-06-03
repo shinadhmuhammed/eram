@@ -34,7 +34,7 @@ superadminroute.post("/verifyEditProfile",authenticateToken, verifyUpdateProfile
 superadminroute.patch("/admin",authenticateToken, disableAdmin);
 
 superadminroute.put("/admin/:adminId",authenticateToken, editAdmin);
-superadminroute.put("/branch/:adminId",authenticateToken, editBranch);
+superadminroute.put("/branch/:id",authenticateToken, editBranch);
 
 superadminroute.delete("/branch/:branchId",authenticateToken, deleteBranch);
 

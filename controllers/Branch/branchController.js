@@ -1,5 +1,6 @@
 const Branch = require("../../models/branchModel");
-const { upload } = require('../../utils/multer')
+const { upload } = require("../../utils/multer");
+const mongoose = require("mongoose");
 
 const createBranch = async (req, res) => {
   upload(req, res, async (err) => {
@@ -82,31 +83,37 @@ const getBranch = async (req, res) => {
   }
 };
 
-
 const editBranch = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
       return res.status(400).json({ message: err.message });
     }
 
-    const { branchId } = req.params;
+    const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(branchId)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid branch ID" });
     }
 
     try {
-      const branch = await Branch.findById(branchId);
+      const branch = await Branch.findById(id);
       if (!branch) {
         return res.status(404).json({ message: "Branch not found" });
       }
 
       const updatableFields = [
-        "name", "branchCode", "isActive", "location", "description",
-        "home", "about", "services", "contact"
+        "name",
+        "branchCode",
+        "isActive",
+        "location",
+        "description",
+        "home",
+        "about",
+        "services",
+        "contact",
       ];
 
-      updatableFields.forEach(field => {
+      updatableFields.forEach((field) => {
         if (typeof req.body[field] !== "undefined") {
           branch[field] = req.body[field];
         }
@@ -118,47 +125,60 @@ const editBranch = async (req, res) => {
 
       await branch.save();
 
-      return res.status(200).json({ message: "Branch updated successfully", data: branch });
+      return res
+        .status(200)
+        .json({ message: "Branch updated successfully", data: branch });
     } catch (error) {
       console.error("Error editing branch:", error.message);
-      return res.status(500).json({ message: "Server error while editing branch", error: error.message });
+      return res
+        .status(500)
+        .json({
+          message: "Server error while editing branch",
+          error: error.message,
+        });
     }
   });
 };
 
-
-
-const deleteBranch = async(req,res) => {
-  const branchId = req.params.branchId
+const deleteBranch = async (req, res) => {
+  const branchId = req.params.branchId;
   try {
-      const branchDelete = await Branch.findByIdAndDelete({_id:branchId})
-      return res.status(200).json({message:"Branch deleted successfully...!"})
+    const branchDelete = await Branch.findByIdAndDelete({ _id: branchId });
+    return res.status(200).json({ message: "Branch deleted successfully...!" });
   } catch (error) {
-    console.error(error.message)
-      return res.status(500).json({ message: "Server error while deleting branch", error: error.message });
+    console.error(error.message);
+    return res
+      .status(500)
+      .json({
+        message: "Server error while deleting branch",
+        error: error.message,
+      });
   }
-}
+};
 
-
-const getBranchById = async (req,res) =>{
+const getBranchById = async (req, res) => {
   try {
-    const {branchId} = req.params;
-    const newBranch = await Branch.findOne({_id:branchId})
-        if (!newBranch) {
+    const { branchId } = req.params;
+    const newBranch = await Branch.findOne({ _id: branchId });
+    if (!newBranch) {
       return res.status(404).json({ message: "Branch not found" });
     }
-     return res.status(200).json({ branch: newBranch });
+    return res.status(200).json({ branch: newBranch });
   } catch (error) {
-    console.error(error)
-     return res.status(500).json({ message: "Server error while getting the  branch", error: error.message });
+    console.error(error);
+    return res
+      .status(500)
+      .json({
+        message: "Server error while getting the  branch",
+        error: error.message,
+      });
   }
-}
-
+};
 
 module.exports = {
   createBranch,
   getBranch,
   editBranch,
   deleteBranch,
-  getBranchById 
+  getBranchById,
 };

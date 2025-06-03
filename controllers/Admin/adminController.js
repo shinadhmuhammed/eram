@@ -186,7 +186,7 @@ const addPipeline = async (req, res) => {
 };
 
 const editAdmin = async (req, res) => {
-  const { adminId } = req.params;
+  const {    } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(adminId)) {
     return res.status(400).json({ message: "Invalid admin ID" });
@@ -219,8 +219,8 @@ const editAdmin = async (req, res) => {
     }
 
     await adminUser.save();
-        await redisClient.del("allAdmins");
-    await redisClient.del(`admin:${adminId}`);
+    //     await redisClient.del("allAdmins");
+    // await redisClient.del(`admin:${adminId}`);
 
     return res.status(200).json({
       message: "Admin updated successfully",
@@ -244,8 +244,8 @@ const disableAdmin = async (req, res) => {
     adminUser.accountStatus =
       adminUser.accountStatus === "active" ? "inActive" : "active";
     await adminUser.save();
-    await redisClient.del("allAdmins");
-    await redisClient.del(`admin:${adminId}`);
+    // await redisClient.del("allAdmins");
+    // await redisClient.del(`admin:${adminId}`);
 
     return res
       .status(200)
