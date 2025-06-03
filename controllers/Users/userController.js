@@ -154,7 +154,7 @@ const login = async (req, res) => {
 
 const logout = async (req,res) => {
   try {
-    res.clearCookie('token', {
+    res.clearCookie('super_admin', {
     httpOnly: true,
     secure: false,    
     sameSite: 'Lax', 
