@@ -3,6 +3,7 @@ const User = require("../../models/userModel");
 const Workorder = require("../../models/workorderModel");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const redisClient = require("../../utils/redisClient");
 const addAdmin = async (req, res) => {
   try {
     const {
@@ -46,7 +47,15 @@ const addAdmin = async (req, res) => {
 
 const getAllAdmin = async (req, res) => {
   try {
+    const cacheKey = "allAdmins";
+    const cached = await redisClient.get(cacheKey);
+    console.log(cached,'hi chachedddddd-=-=-=-=-=-')
+    if(cacheKey){
+      console.log("From redis")
+      return res.status(200).json({allAdmins:JSON.parse(cached)})
+        }
     const allAdmins = await User.find({ role: "admin" });
+    await redisClient.setEx(cacheKey, 300, JSON.stringify(allAdmins)); 
     return res.status(200).json({ allAdmins });
   } catch (error) {
     console.log(error.message);
@@ -210,6 +219,8 @@ const editAdmin = async (req, res) => {
     }
 
     await adminUser.save();
+        await redisClient.del("allAdmins");
+    await redisClient.del(`admin:${adminId}`);
 
     return res.status(200).json({
       message: "Admin updated successfully",
@@ -233,6 +244,8 @@ const disableAdmin = async (req, res) => {
     adminUser.accountStatus =
       adminUser.accountStatus === "active" ? "inActive" : "active";
     await adminUser.save();
+    await redisClient.del("allAdmins");
+    await redisClient.del(`admin:${adminId}`);
 
     return res
       .status(200)

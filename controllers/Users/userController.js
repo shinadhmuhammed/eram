@@ -250,12 +250,10 @@ const requestUpdateProfile = async (req, res) => {
 
 const verifyUpdateProfile = async (req, res) => {
   const userEmail = req.user.email;
-  console.log(userEmail,'hi user email-=-=-=')
   const { otp } = req.body;
 
   try {
     const otpRecord = await OTP.findOne({ email: userEmail });
-    console.log(userEmail,'hi mail =-=-=-=',otpRecord)
     if (!otpRecord || otpRecord.otp !== otp) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
