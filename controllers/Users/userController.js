@@ -153,8 +153,9 @@ const login = async (req, res) => {
 
 
 const logout = async (req,res) => {
+  const role = req.user.role
   try {
-    res.clearCookie('super_admin', {
+    res.clearCookie(role, {
     httpOnly: true,
     secure: false,    
     sameSite: 'Lax', 

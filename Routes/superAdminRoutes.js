@@ -26,7 +26,7 @@ superadminroute.get("/branch/:branchId", authenticateToken,getBranchById);
 superadminroute.post("/branch",authenticateToken, createBranch);
 superadminroute.post("/admin",authenticateToken, addAdmin);
 superadminroute.post("/Login", login);
-superadminroute.post("/Logout", logout);
+superadminroute.post("/Logout",authenticateToken, logout);
 superadminroute.post("/adminLoginverify", verifyAdminLoginOtp);
 superadminroute.post("/editProfile",authenticateToken, requestUpdateProfile);
 superadminroute.post("/verifyEditProfile",authenticateToken, verifyUpdateProfile);
