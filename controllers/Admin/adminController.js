@@ -47,15 +47,15 @@ const addAdmin = async (req, res) => {
 
 const getAllAdmin = async (req, res) => {
   try {
-    const cacheKey = "allAdmins";
-    const cached = await redisClient.get(cacheKey);
-    console.log(cached,'hi chachedddddd-=-=-=-=-=-')
-    if(cacheKey){
-      console.log("From redis")
-      return res.status(200).json({allAdmins:JSON.parse(cached)})
-        }
+    // const cacheKey = "allAdmins";
+    // const cached = await redisClient.get(cacheKey);
+    // console.log(cached,'hi chachedddddd-=-=-=-=-=-')
+    // if(cacheKey){
+    //   console.log("From redis")
+    //   return res.status(200).json({allAdmins:JSON.parse(cached)})
+    //     }
     const allAdmins = await User.find({ role: "admin" });
-    await redisClient.setEx(cacheKey, 300, JSON.stringify(allAdmins)); 
+    // await redisClient.setEx(cacheKey, 300, JSON.stringify(allAdmins)); 
     return res.status(200).json({ allAdmins });
   } catch (error) {
     console.log(error.message);
