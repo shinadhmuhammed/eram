@@ -47,15 +47,14 @@ const addAdmin = async (req, res) => {
 
 const getAllAdmin = async (req, res) => {
   try {
-    // const cacheKey = "allAdmins";
-    // const cached = await redisClient.get(cacheKey);
-    // console.log(cached,'hi chachedddddd-=-=-=-=-=-')
-    // if(cacheKey){
-    //   console.log("From redis")
-    //   return res.status(200).json({allAdmins:JSON.parse(cached)})
-    //     }
+    const cacheKey = "allAdmins";
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      console.log("From redis");
+      return res.status(200).json({ allAdmins: JSON.parse(cached) });
+    }
     const allAdmins = await User.find({ role: "admin" });
-    // await redisClient.setEx(cacheKey, 300, JSON.stringify(allAdmins)); 
+    await redisClient.setEx(cacheKey, 300, JSON.stringify(allAdmins));
     return res.status(200).json({ allAdmins });
   } catch (error) {
     console.log(error.message);
@@ -187,7 +186,6 @@ const addPipeline = async (req, res) => {
 
 const editAdmin = async (req, res) => {
   const { adminId } = req.params;
-  console.log(adminId,'hi admin idddd')
   if (!mongoose.Types.ObjectId.isValid(adminId)) {
     return res.status(400).json({ message: "Invalid admin ID" });
   }
@@ -209,8 +207,7 @@ const editAdmin = async (req, res) => {
     }
 
     const allowedFields = Object.keys(User.schema.paths).filter(
-      (field) =>
-        !["_id", "__v", "passwordHash", "branch"].includes(field) 
+      (field) => !["_id", "__v", "passwordHash", "branch"].includes(field)
     );
 
     for (const key of allowedFields) {
@@ -220,6 +217,8 @@ const editAdmin = async (req, res) => {
     }
 
     await adminUser.save();
+    await redisClient.del("allAdmins");
+    await redisClient.del(`admin:${adminId}`);
 
     return res.status(200).json({
       message: "Admin updated successfully",
@@ -230,7 +229,6 @@ const editAdmin = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
 
 const disableAdmin = async (req, res) => {
   try {
@@ -244,8 +242,8 @@ const disableAdmin = async (req, res) => {
     adminUser.accountStatus =
       adminUser.accountStatus === "active" ? "inActive" : "active";
     await adminUser.save();
-    // await redisClient.del("allAdmins");
-    // await redisClient.del(`admin:${adminId}`);
+    await redisClient.del("allAdmins");
+    await redisClient.del(`admin:${adminId}`);
 
     return res
       .status(200)

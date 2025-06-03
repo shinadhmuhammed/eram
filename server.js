@@ -5,6 +5,7 @@ const connectDB = require("./connections/dbConnection");
 const userRouter = require("./Routes/userRoutes");
 const  superadminroute = require('./Routes/superAdminRoutes')
 const adminRouter = require("./Routes/adminRoutes");
+const cookieParser = require("cookie-parser");
 const port = 5000 || process.env.port;
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use("/api/users", userRouter);

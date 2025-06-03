@@ -98,7 +98,7 @@ const login = async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET,
-       { expiresIn: "7d" }
+      { expiresIn: "7d" }
     );
 
     if (user.role === "super_admin") {
@@ -130,9 +130,15 @@ const login = async (req, res) => {
       });
     }
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         email: user.email,
         name: user.fullName,
@@ -166,12 +172,18 @@ const verifyAdminLoginOtp = async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET,
-       { expiresIn: "7d" }
+      { expiresIn: "7d" }
     );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(201).json({
       message: "Admin OTP verification successful!",
-      token,
       user: {
         email: user.email,
         name: user.fullName,
