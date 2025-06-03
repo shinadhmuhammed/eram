@@ -151,6 +151,21 @@ const login = async (req, res) => {
   }
 };
 
+
+const logout = async () => {
+  try {
+    res.clearCookie('token', {
+    httpOnly: true,
+    secure: false,    
+    sameSite: 'Lax', 
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 const verifyAdminLoginOtp = async (req, res) => {
   const { email, otp } = req.body;
   try {
@@ -307,6 +322,7 @@ module.exports = {
   verifyAdminLoginOtp,
   resendOtp,
   login,
+  logout,
   requestUpdateProfile,
   verifyUpdateProfile,
 };

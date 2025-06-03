@@ -14,7 +14,7 @@ const {
   getAdminById,
 } = require("../controllers/Admin/adminController");
 const authenticateToken = require("../middleware/jwtMiddleware");
-const { login, verifyAdminLoginOtp, requestUpdateProfile, verifyUpdateProfile } = require("../controllers/Users/userController");
+const { login, verifyAdminLoginOtp, requestUpdateProfile, verifyUpdateProfile, logout } = require("../controllers/Users/userController");
 
 const superadminroute = express.Router();
 
@@ -26,6 +26,7 @@ superadminroute.get("/branch/:branchId", authenticateToken,getBranchById);
 superadminroute.post("/branch",authenticateToken, createBranch);
 superadminroute.post("/admin",authenticateToken, addAdmin);
 superadminroute.post("/Login", login);
+superadminroute.post("/Logout", logout);
 superadminroute.post("/adminLoginverify", verifyAdminLoginOtp);
 superadminroute.post("/editProfile",authenticateToken, requestUpdateProfile);
 superadminroute.post("/verifyEditProfile",authenticateToken, verifyUpdateProfile);
