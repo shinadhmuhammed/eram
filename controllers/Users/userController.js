@@ -130,7 +130,7 @@ const login = async (req, res) => {
       });
     }
 
-    res.cookie("token", token, {
+    res.cookie(user.role, token, {
       httpOnly: true,
       secure: false,
       sameSite: "Lax",
@@ -190,7 +190,7 @@ const verifyAdminLoginOtp = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
+    res.cookie("super_admin", token, {
       httpOnly: true,
       secure: false,
       sameSite: "Lax",
