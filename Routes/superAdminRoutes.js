@@ -4,6 +4,7 @@ const {
   getBranch,
   editBranch,
   deleteBranch,
+  getBranchById,
 } = require("../controllers/Branch/branchController");
 const {
   getAllAdmin,
@@ -20,6 +21,7 @@ const superadminroute = express.Router();
 superadminroute.get("/branch", authenticateToken,getBranch);
 superadminroute.get("/admin",authenticateToken, getAllAdmin);
 superadminroute.get("/adminId/:adminId", authenticateToken,getAdminById);
+superadminroute.get("/branch/:branchId", authenticateToken,getBranchById);
 
 superadminroute.post("/branch",authenticateToken, createBranch);
 superadminroute.post("/admin",authenticateToken, addAdmin);

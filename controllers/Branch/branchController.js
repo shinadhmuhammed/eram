@@ -140,9 +140,25 @@ const deleteBranch = async(req,res) => {
 }
 
 
+const getBranchById = async (req,res) =>{
+  try {
+    const {branchId} = req.params;
+    const newBranch = await Branch.findOne({_id:branchId})
+        if (!newBranch) {
+      return res.status(404).json({ message: "Branch not found" });
+    }
+     return res.status(200).json({ branch: newBranch });
+  } catch (error) {
+    console.error(error)
+     return res.status(500).json({ message: "Server error while getting the  branch", error: error.message });
+  }
+}
+
+
 module.exports = {
   createBranch,
   getBranch,
   editBranch,
   deleteBranch,
+  getBranchById 
 };
