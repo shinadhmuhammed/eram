@@ -77,6 +77,7 @@ const userSchema = new mongoose.Schema({
   partnership: {
     type: String,
   },
+  
 });
 
 const User = mongoose.model("User", userSchema);

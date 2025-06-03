@@ -152,7 +152,7 @@ const login = async (req, res) => {
 };
 
 
-const logout = async () => {
+const logout = async (req,res) => {
   try {
     res.clearCookie('token', {
     httpOnly: true,
