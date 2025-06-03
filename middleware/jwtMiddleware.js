@@ -3,7 +3,13 @@ const jwt = require('jsonwebtoken');
 const authenticateToken = (req, res, next) => {
   console.log("JWT middleware called");
 
-  const token = req.cookies.token; 
+    const token =
+    req.cookies.super_admin ||
+    req.cookies.admin ||
+    req.cookies.recruiter ||
+    req.cookies.candidate ||
+    req.cookies.employee;
+    
   if (!token) {
     return res.status(401).json({ message: 'Access denied. No token provided.' });
   }
