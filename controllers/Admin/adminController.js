@@ -87,6 +87,7 @@ const createWorkOrder = async (req, res) => {
       jobRequirements,
       numberOfCandidate,
       isArchived,
+      isCommon,
       benefits,
       languagesRequired,
     } = req.body;
@@ -114,6 +115,7 @@ const createWorkOrder = async (req, res) => {
       jobRequirements,
       numberOfCandidate,
       isArchived,
+      isCommon,
       benefits,
       languagesRequired,
     });
@@ -158,6 +160,8 @@ const editWorkOrder = async (req, res) => {
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
+
+  console.log(req.body,'hi body')
   const createdBy = req.user.id;
 
   try {
@@ -182,6 +186,25 @@ const addPipeline = async (req, res) => {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
+};
+
+const editPipeline = async (req, res) => {
+  const { pipelineId } = req.params;
+  try {
+    const pipelines = await Pipeline.findById(pipelineId);
+    if (!pipelines) {
+      return res.status(404).json({ message: "Pipeline not found" });
+    }
+    return res.status(200).json({ pipelines });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const deletePipeline = async (req, res) => {
+  try {
+  } catch (error) {}
 };
 
 const editAdmin = async (req, res) => {
@@ -280,4 +303,6 @@ module.exports = {
   disableAdmin,
   getAdminById,
   editWorkOrder,
+  editPipeline,
+  deletePipeline,
 };

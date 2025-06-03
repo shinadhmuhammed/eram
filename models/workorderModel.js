@@ -69,6 +69,10 @@ const workorderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isCommon: {
+      type: Boolean,
+      default:false
+    },
     benefits: {
       type: [String],
       default: [],
