@@ -62,6 +62,18 @@ const getAllAdmin = async (req, res) => {
   }
 };
 
+
+const getPipeline = async (req,res) => {
+  try {
+    const allPipelines = await Pipeline.find({})
+
+     return res.status(200).json({ allPipelines });
+  } catch (error) {
+      console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 const createWorkOrder = async (req, res) => {
   try {
     const {
@@ -297,6 +309,7 @@ const getAdminById = async (req, res) => {
 module.exports = {
   addAdmin,
   getAllAdmin,
+  getPipeline,
   createWorkOrder,
   addPipeline,
   editAdmin,
