@@ -187,7 +187,7 @@ const addPipeline = async (req, res) => {
 
 const editAdmin = async (req, res) => {
   const { adminId } = req.params;
-
+  console.log(adminId,'hi admin idddd')
   if (!mongoose.Types.ObjectId.isValid(adminId)) {
     return res.status(400).json({ message: "Invalid admin ID" });
   }
@@ -198,31 +198,28 @@ const editAdmin = async (req, res) => {
       return res.status(404).json({ message: "Admin not found" });
     }
 
-    const updatableFields = [
-      "firstName",
-      "lastName",
-      "fullName",
-      "email",
-      "branchId",
-      "phone",
-      "cPassword",
-      "accountStatus",
-    ];
+    if (req.body.branchId) {
+      adminUser.branch = req.body.branchId;
+    }
 
-    updatableFields.forEach((field) => {
-      if (typeof req.body[field] !== "undefined") {
-        adminUser[field] = req.body[field];
-      }
-    });
-    
-
-    if (req.body.password) {
+    if (req.body.password || req.body.cPassword) {
+      const plainPassword = req.body.password || req.body.cPassword;
       const salt = await bcrypt.genSalt(10);
-      adminUser.passwordHash = await bcrypt.hash(req.body.password, salt);
+      adminUser.passwordHash = await bcrypt.hash(plainPassword, salt);
+    }
+
+    const allowedFields = Object.keys(User.schema.paths).filter(
+      (field) =>
+        !["_id", "__v", "passwordHash", "branch"].includes(field) 
+    );
+
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        adminUser[key] = req.body[key];
+      }
     }
 
     await adminUser.save();
-    
 
     return res.status(200).json({
       message: "Admin updated successfully",
@@ -233,6 +230,7 @@ const editAdmin = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
 
 const disableAdmin = async (req, res) => {
   try {
