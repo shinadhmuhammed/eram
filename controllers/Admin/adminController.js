@@ -186,7 +186,7 @@ const addPipeline = async (req, res) => {
 };
 
 const editAdmin = async (req, res) => {
-  const {    } = req.params;
+  const { adminId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(adminId)) {
     return res.status(400).json({ message: "Invalid admin ID" });
@@ -203,7 +203,9 @@ const editAdmin = async (req, res) => {
       "lastName",
       "fullName",
       "email",
+      "branchId",
       "phone",
+      "cPassword",
       "accountStatus",
     ];
 
@@ -212,6 +214,7 @@ const editAdmin = async (req, res) => {
         adminUser[field] = req.body[field];
       }
     });
+    
 
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
@@ -219,8 +222,7 @@ const editAdmin = async (req, res) => {
     }
 
     await adminUser.save();
-    //     await redisClient.del("allAdmins");
-    // await redisClient.del(`admin:${adminId}`);
+    
 
     return res.status(200).json({
       message: "Admin updated successfully",
