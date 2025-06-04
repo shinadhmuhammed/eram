@@ -49,8 +49,8 @@ const addAdmin = async (req, res) => {
 const getAllAdmin = async (req, res) => {
   try {
     const allAdmins = await User.find({ role: "admin" });
-    if(!allAdmins){
-         return res.status(404).json({ message: "Not find any admin" });
+    if (!allAdmins) {
+      return res.status(404).json({ message: "Not find any admin" });
     }
     return res.status(200).json({ allAdmins });
   } catch (error) {
@@ -287,9 +287,10 @@ const editPipeline = async (req, res) => {
 
 const deletePipeline = async (req, res) => {
   const { Id } = req.params;
+  console.log(Id, "look-");
   try {
     const pipelineDelete = await Pipeline.findByIdAndDelete({ _id: Id });
-     await clearUserPipelineCache(pipelineDelete.createdBy);
+    await clearUserPipelineCache(pipelineDelete.createdBy);
     return res.status(200).json({ message: "Deleted Successfully..!" });
   } catch (error) {
     console.error(error);
@@ -309,8 +310,9 @@ const deleteStage = async (req, res) => {
         .json({ message: "Stage not found in any pipeline" });
     }
 
-    pipeline.stages.id(stageId).remove();
-
+    pipeline.stages = pipeline.stages.filter(
+      (stage) => stage._id.toString() !== stageId
+    );
     await pipeline.save();
     await clearUserPipelineCache(pipeline.createdBy);
 
