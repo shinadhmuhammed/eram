@@ -163,13 +163,15 @@ const getPipeline = async (req, res) => {
     const cachedPipelines = await redisClient.get("all_pipelines");
 
     if (cachedPipelines) {
-      return res.status(200).json({ allPipelines: JSON.parse(cachedPipelines) });
+      return res
+        .status(200)
+        .json({ allPipelines: JSON.parse(cachedPipelines) });
     }
 
     const allPipelines = await Pipeline.find({});
-    
+
     await redisClient.set("all_pipelines", JSON.stringify(allPipelines), {
-      EX: 60 * 5 
+      EX: 60 * 5,
     });
 
     return res.status(200).json({ allPipelines });
@@ -178,7 +180,6 @@ const getPipeline = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
@@ -199,7 +200,6 @@ const addPipeline = async (req, res) => {
 
     await newPipeLine.save();
     await redisClient.del("all_pipelines");
-
 
     return res
       .status(200)
@@ -226,23 +226,28 @@ const editPipeline = async (req, res) => {
     }
 
     await existingPipeline.save();
-    await redisClient.del("all_pipelines"); 
+    await redisClient.del("all_pipelines");
 
     return res
       .status(200)
-      .json({ message: "Pipeline updated successfully", data: existingPipeline });
-
+      .json({
+        message: "Pipeline updated successfully",
+        data: existingPipeline,
+      });
   } catch (error) {
     console.error("Edit pipeline error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-
 const deletePipeline = async (req, res) => {
+  const { Id } = req.params;
   try {
+    const pipelineDelete = await Branch.findByIdAndDelete({ _id: Id });
+    return res.status(200).json({ message: "Deleted Successfully..!" });
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
