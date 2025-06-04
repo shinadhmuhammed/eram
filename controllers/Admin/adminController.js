@@ -158,13 +158,43 @@ const editWorkOrder = async (req, res) => {
   }
 };
 
+const editStage = async (req, res) => {
+  const { Id: stageId } = req.params;
+  const { name, order, description, requiredDocuments } = req.body;
+
+  try {
+    const pipeline = await Pipeline.findOne({ "stages._id": stageId });
+
+    if (!pipeline) {
+      return res.status(404).json({ message: "Stage not found in any pipeline" });
+    }
+    const stage = pipeline.stages.id(stageId);
+    if (!stage) {
+      return res.status(404).json({ message: "Stage not found" });
+    }
+
+    if (name) stage.name = name;
+    if (order) stage.order = order;
+    if (description) stage.description = description;
+    if (requiredDocuments) stage.requiredDocuments = requiredDocuments;
+
+    await pipeline.save(); 
+    await redisClient.del("all_pipelines");
+
+    return res.status(200).json({ message: "Stage updated successfully", pipeline });
+  } catch (error) {
+    console.error("Error updating pipeline stage:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 const getPipeline = async (req, res) => {
   const userId = req.user.id;
 
   try {
     const cacheKey = `all_pipelines:${userId}`;
     const cachedPipelines = await redisClient.get(cacheKey);
-
     if (cachedPipelines) {
       return res
         .status(200)
@@ -172,7 +202,6 @@ const getPipeline = async (req, res) => {
     }
 
     const allPipelines = await Pipeline.find({ createdBy: userId });
-
     await redisClient.set(cacheKey, JSON.stringify(allPipelines), {
       EX: 60 * 5,
     });
@@ -200,6 +229,8 @@ const getPipelineById = async (req, res) => {
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
+
+  console.log(req.body,'hi body=-=-==')
   const createdBy = req.user.id;
 
   try {
@@ -244,7 +275,6 @@ const editPipeline = async (req, res) => {
 
     await existingPipeline.save();
     await redisClient.del("all_pipelines");
-
     return res.status(200).json({
       message: "Pipeline updated successfully",
       data: existingPipeline,
@@ -265,6 +295,29 @@ const deletePipeline = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const deleteStage = async (req, res) => {
+  const { Id: stageId } = req.params;
+
+  try {
+    const pipeline = await Pipeline.findOne({ "stages._id": stageId });
+
+    if (!pipeline) {
+      return res.status(404).json({ message: "Stage not found in any pipeline" });
+    }
+
+    pipeline.stages.id(stageId).remove();
+
+    await pipeline.save();
+    await redisClient.del("all_pipelines");
+
+    return res.status(200).json({ message: "Stage deleted successfully", pipeline });
+  } catch (error) {
+    console.error("Error deleting pipeline stage:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 const editAdmin = async (req, res) => {
   const { adminId } = req.params;
@@ -366,4 +419,6 @@ module.exports = {
   editWorkOrder,
   editPipeline,
   deletePipeline,
+  editStage,
+  deleteStage
 };
