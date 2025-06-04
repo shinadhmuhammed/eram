@@ -17,7 +17,7 @@ adminroute.post('/addPipeline',authenticateToken,authorizeRoles("admin"), addPip
 
 
 adminroute.put("/editPipeline/:pipelineId",authenticateToken,authorizeRoles("admin"), editPipeline)
-adminroute.put("/editWorkOrder",authenticateToken,authorizeRoles("admin"), editWorkOrder)
+adminroute.put("/editWorkOrder/:id",authenticateToken,authorizeRoles("admin"), editWorkOrder)
 adminroute.put("/stagesEdit/:Id",authenticateToken,authorizeRoles("admin"), editStage)
 
 adminroute.delete('/deletePipeline/:Id',authenticateToken,authorizeRoles("admin"), deletePipeline)

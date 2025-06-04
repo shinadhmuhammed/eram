@@ -4,6 +4,7 @@ const Workorder = require("../../models/workorderModel");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const redisClient = require("../../utils/redisClient");
+const { clearUserPipelineCache } = require("../../utils/cache");
 const addAdmin = async (req, res) => {
   try {
     const {
@@ -47,14 +48,10 @@ const addAdmin = async (req, res) => {
 
 const getAllAdmin = async (req, res) => {
   try {
-    const cacheKey = "allAdmins";
-    const cached = await redisClient.get(cacheKey);
-    if (cached) {
-      console.log("From redis");
-      return res.status(200).json({ allAdmins: JSON.parse(cached) });
-    }
     const allAdmins = await User.find({ role: "admin" });
-    await redisClient.setEx(cacheKey, 300, JSON.stringify(allAdmins));
+    if(!allAdmins){
+         return res.status(404).json({ message: "Not find any admin" });
+    }
     return res.status(200).json({ allAdmins });
   } catch (error) {
     console.log(error.message);
@@ -166,7 +163,9 @@ const editStage = async (req, res) => {
     const pipeline = await Pipeline.findOne({ "stages._id": stageId });
 
     if (!pipeline) {
-      return res.status(404).json({ message: "Stage not found in any pipeline" });
+      return res
+        .status(404)
+        .json({ message: "Stage not found in any pipeline" });
     }
     const stage = pipeline.stages.id(stageId);
     if (!stage) {
@@ -178,16 +177,17 @@ const editStage = async (req, res) => {
     if (description) stage.description = description;
     if (requiredDocuments) stage.requiredDocuments = requiredDocuments;
 
-    await pipeline.save(); 
-    await redisClient.del("all_pipelines");
+    await pipeline.save();
+    await clearUserPipelineCache(pipeline.createdBy);
 
-    return res.status(200).json({ message: "Stage updated successfully", pipeline });
+    return res
+      .status(200)
+      .json({ message: "Stage updated successfully", pipeline });
   } catch (error) {
     console.error("Error updating pipeline stage:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 const getPipeline = async (req, res) => {
   const userId = req.user.id;
@@ -246,8 +246,7 @@ const addPipeline = async (req, res) => {
     });
 
     await newPipeLine.save();
-    await redisClient.del(`all_pipelines:${createdBy}`);
-
+    await clearUserPipelineCache(createdBy);
 
     return res
       .status(200)
@@ -274,7 +273,7 @@ const editPipeline = async (req, res) => {
     }
 
     await existingPipeline.save();
-    await redisClient.del(`all_pipelines:${existingPipeline.createdBy}`);
+    await clearUserPipelineCache(existingPipeline.createdBy);
 
     return res.status(200).json({
       message: "Pipeline updated successfully",
@@ -290,6 +289,7 @@ const deletePipeline = async (req, res) => {
   const { Id } = req.params;
   try {
     const pipelineDelete = await Pipeline.findByIdAndDelete({ _id: Id });
+     await clearUserPipelineCache(pipelineDelete.createdBy);
     return res.status(200).json({ message: "Deleted Successfully..!" });
   } catch (error) {
     console.error(error);
@@ -304,21 +304,24 @@ const deleteStage = async (req, res) => {
     const pipeline = await Pipeline.findOne({ "stages._id": stageId });
 
     if (!pipeline) {
-      return res.status(404).json({ message: "Stage not found in any pipeline" });
+      return res
+        .status(404)
+        .json({ message: "Stage not found in any pipeline" });
     }
 
     pipeline.stages.id(stageId).remove();
 
     await pipeline.save();
-    await redisClient.del("all_pipelines");
+    await clearUserPipelineCache(pipeline.createdBy);
 
-    return res.status(200).json({ message: "Stage deleted successfully", pipeline });
+    return res
+      .status(200)
+      .json({ message: "Stage deleted successfully", pipeline });
   } catch (error) {
     console.error("Error deleting pipeline stage:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 const editAdmin = async (req, res) => {
   const { adminId } = req.params;
@@ -353,9 +356,6 @@ const editAdmin = async (req, res) => {
     }
 
     await adminUser.save();
-    await redisClient.del("allAdmins");
-    await redisClient.del(`admin:${adminId}`);
-
     return res.status(200).json({
       message: "Admin updated successfully",
       data: adminUser,
@@ -378,8 +378,6 @@ const disableAdmin = async (req, res) => {
     adminUser.accountStatus =
       adminUser.accountStatus === "active" ? "inActive" : "active";
     await adminUser.save();
-    await redisClient.del("allAdmins");
-    await redisClient.del(`admin:${adminId}`);
 
     return res
       .status(200)
@@ -421,5 +419,5 @@ module.exports = {
   editPipeline,
   deletePipeline,
   editStage,
-  deleteStage
+  deleteStage,
 };
