@@ -101,6 +101,8 @@ const login = async (req, res) => {
       { expiresIn: "7d" }
     );
 
+    console.log(token,'hi token')
+
     if (user.role === "super_admin") {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 

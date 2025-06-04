@@ -159,8 +159,11 @@ const editWorkOrder = async (req, res) => {
 };
 
 const getPipeline = async (req, res) => {
+  const userId = req.user.id;
+
   try {
-    const cachedPipelines = await redisClient.get("all_pipelines");
+    const cacheKey = `all_pipelines:${userId}`;
+    const cachedPipelines = await redisClient.get(cacheKey);
 
     if (cachedPipelines) {
       return res
@@ -168,9 +171,9 @@ const getPipeline = async (req, res) => {
         .json({ allPipelines: JSON.parse(cachedPipelines) });
     }
 
-    const allPipelines = await Pipeline.find({});
+    const allPipelines = await Pipeline.find({ createdBy: userId });
 
-    await redisClient.set("all_pipelines", JSON.stringify(allPipelines), {
+    await redisClient.set(cacheKey, JSON.stringify(allPipelines), {
       EX: 60 * 5,
     });
 
@@ -181,20 +184,19 @@ const getPipeline = async (req, res) => {
   }
 };
 
-
-const getPipelineById = async (req,res) => {
-  const {piplineId} = req.params;
+const getPipelineById = async (req, res) => {
+  const { piplineId } = req.params;
   try {
-    const getPipelineByIds = await Pipeline.findById(piplineId)
-    if(!getPipelineByIds){
+    const getPipelineByIds = await Pipeline.findById(piplineId);
+    if (!getPipelineByIds) {
       return res.status(404).json({ message: "Pipeline not found" });
     }
     return res.status(200).json({ getPipelineByIds });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({ message: error.message });
   }
-}
+};
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
@@ -243,12 +245,10 @@ const editPipeline = async (req, res) => {
     await existingPipeline.save();
     await redisClient.del("all_pipelines");
 
-    return res
-      .status(200)
-      .json({
-        message: "Pipeline updated successfully",
-        data: existingPipeline,
-      });
+    return res.status(200).json({
+      message: "Pipeline updated successfully",
+      data: existingPipeline,
+    });
   } catch (error) {
     console.error("Edit pipeline error:", error);
     return res.status(500).json({ message: "Internal server error" });
