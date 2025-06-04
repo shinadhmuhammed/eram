@@ -181,6 +181,16 @@ const getPipeline = async (req, res) => {
   }
 };
 
+
+const getPipelineById = async (req,res) => {
+  try {
+    
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({ message: error.message });
+  }
+}
+
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
   const createdBy = req.user.id;
@@ -243,7 +253,7 @@ const editPipeline = async (req, res) => {
 const deletePipeline = async (req, res) => {
   const { Id } = req.params;
   try {
-    const pipelineDelete = await Branch.findByIdAndDelete({ _id: Id });
+    const pipelineDelete = await Pipeline.findByIdAndDelete({ _id: Id });
     return res.status(200).json({ message: "Deleted Successfully..!" });
   } catch (error) {
     console.error(error);
@@ -343,6 +353,7 @@ module.exports = {
   getAllAdmin,
   createWorkOrder,
   getPipeline,
+  getPipelineById,
   addPipeline,
   editAdmin,
   disableAdmin,
