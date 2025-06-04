@@ -186,6 +186,9 @@ const getPipelineById = async (req,res) => {
   const {piplineId} = req.params;
   try {
     const getPipelineByIds = await Pipeline.findById(piplineId)
+    if(!getPipelineByIds){
+      return res.status(404).json({ message: "Pipeline not found" });
+    }
     return res.status(200).json({ getPipelineByIds });
   } catch (error) {
     console.error(error)
