@@ -3,6 +3,7 @@ const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeli
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
+const { addRecruiter } = require("../controllers/Recruiters/recruiterController");
 
 const adminroute = express.Router();
 
@@ -15,6 +16,7 @@ adminroute.get('/branches',authenticateToken, authorizeRoles("admin"), adminBran
 
 adminroute.post('/WorkOrder',authenticateToken, authorizeRoles("admin"), createWorkOrder )
 adminroute.post('/addPipeline',authenticateToken,authorizeRoles("admin"), addPipeline )
+adminroute.post('/recruiters',authenticateToken,authorizeRoles("admin"), addRecruiter )
 
 
 adminroute.put("/editPipeline/:pipelineId",authenticateToken,authorizeRoles("admin"), editPipeline)

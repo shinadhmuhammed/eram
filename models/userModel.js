@@ -62,9 +62,7 @@ const userSchema = new mongoose.Schema({
   companyName: String,
   companyWebsite: String,
 
-  Category: {
-    type: String,
-  },
+
   website_url: {
     type: String,
   },
