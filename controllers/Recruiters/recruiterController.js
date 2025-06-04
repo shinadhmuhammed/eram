@@ -6,7 +6,6 @@ const addRecruiter = async (req, res) => {
       email,
       phoneno,
       category,
-      website_url,
       status,
       employees_count,
       password,
@@ -20,7 +19,6 @@ const addRecruiter = async (req, res) => {
       !email ||
       !phoneno ||
       !category ||
-      !website_url ||
       !employees_count ||
       !password ||
       !adminId ||
@@ -47,7 +45,6 @@ const addRecruiter = async (req, res) => {
       email,
       category,
       role,
-      website_url,
       branch: branchId,
       status,
       employees_count,

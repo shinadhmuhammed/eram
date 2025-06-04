@@ -223,9 +223,50 @@ const getPipelineById = async (req, res) => {
     return res.status(200).json({ getPipelineByIds });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const adminBranches = async (req, res) => {
+  const userEmail = req.user.email;
+
+  try {
+    const result = await User.aggregate([
+      {
+        $match: {
+          email: userEmail,
+          role: "admin",
+          branch: { $exists: true, $ne: null },
+        },
+      },
+      {
+        $lookup: {
+          from: "branches",
+          localField: "branch",
+          foreignField: "_id",
+          as: "branchInfo",
+        },
+      },
+      {
+        $project: {
+          branchInfo: 1,
+          _id: 0, 
+        },
+      },
+    ]);
+
+    if (result.length === 0 || result[0].branchInfo.length === 0) {
+      return res.status(404).json({ message: "Branch not found for admin" });
+    }
+
+    return res.status(200).json({ branch: result[0].branchInfo[0] });
+
+  } catch (error) {
+    console.error("Error fetching branch info:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
@@ -413,6 +454,7 @@ module.exports = {
   createWorkOrder,
   getPipeline,
   getPipelineById,
+  adminBranches,
   addPipeline,
   editAdmin,
   disableAdmin,
