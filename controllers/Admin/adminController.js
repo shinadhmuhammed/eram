@@ -62,18 +62,6 @@ const getAllAdmin = async (req, res) => {
   }
 };
 
-
-const getPipeline = async (req,res) => {
-  try {
-    const allPipelines = await Pipeline.find({})
-
-     return res.status(200).json({ allPipelines });
-  } catch (error) {
-      console.log(error.message);
-    return res.status(500).json({ message: error.message });
-  }
-}
-
 const createWorkOrder = async (req, res) => {
   try {
     const {
@@ -170,10 +158,30 @@ const editWorkOrder = async (req, res) => {
   }
 };
 
+const getPipeline = async (req, res) => {
+  try {
+    const cachedPipelines = await redisClient.get("all_pipelines");
+
+    if (cachedPipelines) {
+      return res.status(200).json({ allPipelines: JSON.parse(cachedPipelines) });
+    }
+
+    const allPipelines = await Pipeline.find({});
+    
+    await redisClient.set("all_pipelines", JSON.stringify(allPipelines), {
+      EX: 60 * 5 
+    });
+
+    return res.status(200).json({ allPipelines });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
-
-  console.log(req.body,'hi body')
   const createdBy = req.user.id;
 
   try {
@@ -190,6 +198,8 @@ const addPipeline = async (req, res) => {
     });
 
     await newPipeLine.save();
+    await redisClient.del("all_pipelines");
+
 
     return res
       .status(200)
@@ -202,21 +212,38 @@ const addPipeline = async (req, res) => {
 
 const editPipeline = async (req, res) => {
   const { pipelineId } = req.params;
+  const { name, stages } = req.body;
+
   try {
-    const pipelines = await Pipeline.findById(pipelineId);
-    if (!pipelines) {
+    const existingPipeline = await Pipeline.findById(pipelineId);
+
+    if (!existingPipeline) {
       return res.status(404).json({ message: "Pipeline not found" });
     }
-    return res.status(200).json({ pipelines });
+    if (name) existingPipeline.name = name;
+    if (Array.isArray(stages) && stages.length > 0) {
+      existingPipeline.stages = stages;
+    }
+
+    await existingPipeline.save();
+    await redisClient.del("all_pipelines"); 
+
+    return res
+      .status(200)
+      .json({ message: "Pipeline updated successfully", data: existingPipeline });
+
   } catch (error) {
-    console.error(error);
+    console.error("Edit pipeline error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
+
 const deletePipeline = async (req, res) => {
   try {
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const editAdmin = async (req, res) => {
@@ -309,8 +336,8 @@ const getAdminById = async (req, res) => {
 module.exports = {
   addAdmin,
   getAllAdmin,
-  getPipeline,
   createWorkOrder,
+  getPipeline,
   addPipeline,
   editAdmin,
   disableAdmin,
