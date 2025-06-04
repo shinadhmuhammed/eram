@@ -230,7 +230,6 @@ const getPipelineById = async (req, res) => {
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
 
-  console.log(req.body,'hi body=-=-==')
   const createdBy = req.user.id;
 
   try {
@@ -247,7 +246,8 @@ const addPipeline = async (req, res) => {
     });
 
     await newPipeLine.save();
-    await redisClient.del("all_pipelines");
+    await redisClient.del(`all_pipelines:${createdBy}`);
+
 
     return res
       .status(200)
@@ -274,7 +274,8 @@ const editPipeline = async (req, res) => {
     }
 
     await existingPipeline.save();
-    await redisClient.del("all_pipelines");
+    await redisClient.del(`all_pipelines:${existingPipeline.createdBy}`);
+
     return res.status(200).json({
       message: "Pipeline updated successfully",
       data: existingPipeline,
