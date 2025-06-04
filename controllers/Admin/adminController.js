@@ -183,8 +183,10 @@ const getPipeline = async (req, res) => {
 
 
 const getPipelineById = async (req,res) => {
+  const {piplineId} = req.params;
   try {
-    
+    const getPipelineByIds = await Pipeline.findById(piplineId)
+    return res.status(200).json({ getPipelineByIds });
   } catch (error) {
     console.error(error)
     return res.status(500).json({ message: error.message });
