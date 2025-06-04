@@ -7,7 +7,7 @@ const authorizeRoles = require("../middleware/authorizedRoles");
 const adminroute = express.Router();
 
 
-adminroute.get('/WorkOrder',authenticateToken, authorizeRoles("admin"), getPipeline )
+adminroute.get('/Pipeline',authenticateToken, authorizeRoles("admin"), getPipeline )
 
 
 
