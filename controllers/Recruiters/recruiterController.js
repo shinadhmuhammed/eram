@@ -119,8 +119,7 @@ const disableRecruiter = async (req, res) => {
 
     recruiterUser.accountStatus = newStatus;
     await recruiterUser.save();
-        await clearRecruiterCache(adminId);
-
+    await clearRecruiterCache(adminId);
 
     return res
       .status(200)
@@ -128,6 +127,26 @@ const disableRecruiter = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteRecruiter = async (req, res) => {
+  const { Id } = req.params;
+
+  try {
+    const recruiter = await User.findOne({ _id: Id, role: "recruiter" });
+
+    if (!recruiter) {
+      return res.status(404).json({ message: "Recruiter not found!" });
+    }
+
+    await User.findByIdAndDelete(Id);
+    await clearRecruiterCache(adminId);
+
+    return res.status(200).json({ message: "Recruiter deleted successfully" });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -157,6 +176,18 @@ const getRecruiter = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
+const getRecruiterById = async (req,res) => {
+  const {Id} = req.params
+try {
+  const recruiter = await User.findOne({_id:Id,role:"recruiter"})
+  return res.status(200).json({ recruiter });
+} catch (error) {
+  console.log(error.message);
+    return res.status(500).json({ message: "server error"});
+}
+}
 
 const editJobpost = async (req, res) => {
   const { Id } = req.params;
@@ -191,7 +222,9 @@ const editJobpost = async (req, res) => {
 module.exports = {
   addRecruiter,
   editRecruiter,
+  deleteRecruiter,
   getRecruiter,
+  getRecruiterById,
   disableRecruiter,
   editJobpost,
 };
