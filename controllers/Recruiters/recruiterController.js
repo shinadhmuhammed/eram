@@ -2,6 +2,7 @@ const User = require("../../models/userModel");
 const Workorder = require("../../models/workorderModel");
 const { clearRecruiterCache } = require("../../utils/cache");
 const bcrypt = require("bcrypt");
+const redisClient = require("../../utils/redisClient");
 
 
 const addRecruiter = async (req, res) => {
