@@ -39,6 +39,8 @@ const addRecruiter = async (req, res) => {
     });
 
     await newRecruiter.save();
+    await redisClient.del(`recruiters:${adminId}`);
+
 
     res
       .status(201)
