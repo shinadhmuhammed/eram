@@ -47,6 +47,14 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Branch",
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+    specialization: {
+    type: String,
+    required: true,
+  },
   qualifications: [
     {
       degree: String,
@@ -62,7 +70,6 @@ const userSchema = new mongoose.Schema({
   companyName: String,
   companyWebsite: String,
 
-
   website_url: {
     type: String,
   },
@@ -75,7 +82,6 @@ const userSchema = new mongoose.Schema({
   partnership: {
     type: String,
   },
-  
 });
 
 const User = mongoose.model("User", userSchema);

@@ -1,13 +1,14 @@
+const User = require("../../models/userModel");
 const Workorder = require("../../models/workorderModel");
 
 const addRecruiter = async (req, res) => {
   try {
-    const { fullName,companyName, location, email, phoneno, password, adminId, role } =
+    const { fullName, email, phoneno,specialization,experience ,password, role } =
       req.body;
+
+      const adminId = req.user.id
     if (
       !fullName ||
-      !companyName ||
-      !location ||
       !email ||
       !phoneno ||
       !password ||
@@ -28,13 +29,13 @@ const addRecruiter = async (req, res) => {
 
     const newRecruiter = new User({
       fullName,
-      companyName,
-      location,
       email,
-      phoneno,
+      phone:phoneno,
+      specialization,
+      experienceYears:experience,
       role,
       hashedPassword,
-      admin: adminId,
+      createdBy: adminId,
     });
 
     await newRecruiter.save();
@@ -44,6 +45,33 @@ const addRecruiter = async (req, res) => {
       .json({ message: "User registered successfully", newRecruiter });
   } catch (error) {
     console.error(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getRecruiter = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const recruiterCacheKey = `recruiters:${userId}`;
+
+    const cachedRecruiters = await redisClient.get(recruiterCacheKey);
+    if (cachedRecruiters) {
+      return res.status(200).json({ recruiters: JSON.parse(cachedRecruiters) });
+    }
+
+    const recruiters = await User.find({
+      role: "recruiter",
+      createdBy: userId,
+    });
+
+    await redisClient.set(recruiterCacheKey, JSON.stringify(recruiters), {
+      EX: 60 * 5, 
+    });
+
+    return res.status(200).json({ recruiters });
+  } catch (error) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -80,5 +108,6 @@ const editJobpost = async (req, res) => {
 
 module.exports = {
   addRecruiter,
+  getRecruiter,
   editJobpost,
 };

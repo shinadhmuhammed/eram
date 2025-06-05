@@ -3,12 +3,13 @@ const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeli
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
-const { addRecruiter } = require("../controllers/Recruiters/recruiterController");
+const { addRecruiter, getRecruiter } = require("../controllers/Recruiters/recruiterController");
 
 const adminroute = express.Router();
 
 
 adminroute.get('/Pipeline',authenticateToken, authorizeRoles("admin"), getPipeline )
+adminroute.get('/recruiters',authenticateToken, authorizeRoles("admin"), getRecruiter )
 adminroute.get('/Pipeline/:piplineId',authenticateToken, authorizeRoles("admin"), getPipelineById )
 adminroute.get('/branches',authenticateToken, authorizeRoles("admin"), adminBranches )
 adminroute.get('/workOrder',authenticateToken, authorizeRoles("admin"), getWorkorder )

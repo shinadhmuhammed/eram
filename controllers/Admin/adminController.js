@@ -211,6 +211,8 @@ const getPipeline = async (req, res) => {
   }
 };
 
+
+
 const getPipelineById = async (req, res) => {
   const { piplineId } = req.params;
   try {
@@ -432,7 +434,7 @@ const disableAdmin = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Admin marked as deleted", data: adminUser });
+      .json({ message: "Admin marked as disabled", data: adminUser });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
