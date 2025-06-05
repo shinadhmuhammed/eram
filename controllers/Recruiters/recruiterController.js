@@ -1,19 +1,23 @@
 const User = require("../../models/userModel");
 const Workorder = require("../../models/workorderModel");
+const { clearRecruiterCache } = require("../../utils/cache");
+const bcrypt = require("bcrypt");
+
 
 const addRecruiter = async (req, res) => {
   try {
-    const { fullName, email, phoneno,specialization,experience ,password, role } =
-      req.body;
+    const {
+      fullName,
+      email,
+      phoneno,
+      specialization,
+      experience,
+      password,
+      role,
+    } = req.body;
 
-      const adminId = req.user.id
-    if (
-      !fullName ||
-      !email ||
-      !phoneno ||
-      !password ||
-      !adminId
-    ) {
+    const adminId = req.user.id;
+    if (!fullName || !email || !phoneno || !password || !adminId) {
       return res.status(400).json({ message: "missing required fields!" });
     }
 
@@ -30,17 +34,16 @@ const addRecruiter = async (req, res) => {
     const newRecruiter = new User({
       fullName,
       email,
-      phone:phoneno,
+      phone: phoneno,
       specialization,
-      experienceYears:experience,
+      experienceYears: experience,
       role,
       hashedPassword,
       createdBy: adminId,
     });
 
     await newRecruiter.save();
-    await redisClient.del(`recruiters:${adminId}`);
-
+    await clearRecruiterCache(adminId)
 
     res
       .status(201)
@@ -68,7 +71,7 @@ const getRecruiter = async (req, res) => {
     });
 
     await redisClient.set(recruiterCacheKey, JSON.stringify(recruiters), {
-      EX: 60 * 5, 
+      EX: 60 * 5,
     });
 
     return res.status(200).json({ recruiters });
