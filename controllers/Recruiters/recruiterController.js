@@ -4,7 +4,6 @@ const { clearRecruiterCache } = require("../../utils/cache");
 const bcrypt = require("bcrypt");
 const redisClient = require("../../utils/redisClient");
 
-
 const addRecruiter = async (req, res) => {
   try {
     const {
@@ -44,7 +43,7 @@ const addRecruiter = async (req, res) => {
     });
 
     await newRecruiter.save();
-    await clearRecruiterCache(adminId)
+    await clearRecruiterCache(adminId);
 
     res
       .status(201)
@@ -52,6 +51,81 @@ const addRecruiter = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ message: error.message });
+  }
+};
+
+const editRecruiter = async (req, res) => {
+  try {
+    const { Id } = req.params;
+    const {
+      fullName,
+      email,
+      phoneno,
+      specialization,
+      experience,
+      password,
+      role,
+    } = req.body;
+
+    const adminId = req.user.id;
+
+    if (!rId || !adminId) {
+      return res.status(400).json({ message: "Missing required identifiers!" });
+    }
+
+    const recruiter = await User.findById(Id);
+    if (!recruiter) {
+      return res.status(404).json({ message: "Recruiter not found!" });
+    }
+
+    if (fullName) recruiter.fullName = fullName;
+    if (email) recruiter.email = email;
+    if (phoneno) recruiter.phone = phoneno;
+    if (specialization) recruiter.specialization = specialization;
+    if (experience) recruiter.experienceYears = experience;
+    if (role) recruiter.role = role;
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      recruiter.hashedPassword = await bcrypt.hash(password, salt);
+    }
+
+    await recruiter.save();
+    await clearRecruiterCache(adminId);
+
+    return res
+      .status(200)
+      .json({ message: "Recruiter updated successfully", recruiter });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const disableRecruiter = async (req, res) => {
+  try {
+    const { recruiterId } = req.params;
+
+    const recruiterUser = await User.findOne({
+      _id: recruiterId,
+      role: "recruiter",
+    });
+    if (!recruiterUser) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    const newStatus =
+      recruiterUser.accountStatus === "active" ? "inActive" : "active";
+
+    recruiterUser.accountStatus = newStatus;
+    await recruiterUser.save();
+
+    return res
+      .status(200)
+      .json({ message: "Admin marked as disabled", data: recruiterUser });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -114,6 +188,8 @@ const editJobpost = async (req, res) => {
 
 module.exports = {
   addRecruiter,
+  editRecruiter,
   getRecruiter,
+  disableRecruiter,
   editJobpost,
 };
