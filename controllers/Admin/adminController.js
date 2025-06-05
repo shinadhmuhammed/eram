@@ -71,15 +71,13 @@ const createWorkOrder = async (req, res) => {
       companyIndustry,
       EmploymentType,
       Experience,
-      priority,
       Education,
       annualSalary,
-      pipeline,
+      pipelineId,
       startDate,
       endDate,
       deadlineDate,
       assignedId,
-      branchId,
       requiredSkills,
       jobRequirements,
       numberOfCandidate,
@@ -87,6 +85,7 @@ const createWorkOrder = async (req, res) => {
       isCommon,
       benefits,
       languagesRequired,
+      customFields,
     } = req.body;
 
     const newWorkorder = await Workorder.create({
@@ -99,15 +98,13 @@ const createWorkOrder = async (req, res) => {
       companyIndustry,
       EmploymentType,
       Experience,
-      priority,
       Education,
       annualSalary,
-      pipeline,
       startDate,
       endDate,
       deadlineDate,
       assignedRecruiters: assignedId,
-      branch: branchId,
+      pipeline: pipelineId,
       requiredSkills,
       jobRequirements,
       numberOfCandidate,
@@ -115,6 +112,7 @@ const createWorkOrder = async (req, res) => {
       isCommon,
       benefits,
       languagesRequired,
+      customFields,
     });
 
     res.status(201).json({
@@ -250,7 +248,7 @@ const adminBranches = async (req, res) => {
       {
         $project: {
           branchInfo: 1,
-          _id: 0, 
+          _id: 0,
         },
       },
     ]);
@@ -260,13 +258,24 @@ const adminBranches = async (req, res) => {
     }
 
     return res.status(200).json({ branch: result[0].branchInfo[0] });
-
   } catch (error) {
     console.error("Error fetching branch info:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
+const getWorkorder = async (req, res) => {
+  try {
+    const getAllWorkorder = await Workorder.find({})
+      .populate("addedRecruiters", "name email")
+      .populate("pipeline", "name");
+    if (!getAllWorkorder)
+      return res.status(404).json({ message: "Workorder not found" });
+    return res.status(200).json({ getAllWorkorder });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
@@ -328,7 +337,6 @@ const editPipeline = async (req, res) => {
 
 const deletePipeline = async (req, res) => {
   const { Id } = req.params;
-  console.log(Id, "look-");
   try {
     const pipelineDelete = await Pipeline.findByIdAndDelete({ _id: Id });
     await clearUserPipelineCache(pipelineDelete.createdBy);
@@ -455,6 +463,7 @@ module.exports = {
   getPipeline,
   getPipelineById,
   adminBranches,
+  getWorkorder,
   addPipeline,
   editAdmin,
   disableAdmin,

@@ -5,6 +5,7 @@ const connectDB = require("./connections/dbConnection");
 const userRouter = require("./Routes/userRoutes");
 const  superadminroute = require('./Routes/superAdminRoutes')
 const adminRouter = require("./Routes/adminRoutes");
+const recruiterRoutes = require("./Routes/recruiterRoutes");
 const cookieParser = require("cookie-parser");
 const port = 5000 || process.env.port;
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use("/api/users", userRouter);
 app.use('/api/super-admin',superadminroute)
 app.use("/api/admin", adminRouter);
+app.use("/api/recruiter",recruiterRoutes);
 
 connectDB()
   .then(() => {

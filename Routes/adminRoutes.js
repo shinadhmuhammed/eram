@@ -1,5 +1,5 @@
 const express = require("express");
-const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches} = require('../controllers/Admin/adminController');
+const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder} = require('../controllers/Admin/adminController');
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
@@ -11,6 +11,7 @@ const adminroute = express.Router();
 adminroute.get('/Pipeline',authenticateToken, authorizeRoles("admin"), getPipeline )
 adminroute.get('/Pipeline/:piplineId',authenticateToken, authorizeRoles("admin"), getPipelineById )
 adminroute.get('/branches',authenticateToken, authorizeRoles("admin"), adminBranches )
+adminroute.get('/workOrder',authenticateToken, authorizeRoles("admin"), getWorkorder )
 
 
 

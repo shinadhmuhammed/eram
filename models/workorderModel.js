@@ -32,19 +32,12 @@ const workorderSchema = new mongoose.Schema(
     Experience: {
       type: String,
     },
-    priority: {
-      type: String,
-    },
     Education: {
       type: String,
     },
     annualSalary: {
       type: String,
     },
-    pipeline: {
-      type: String,
-    },
-
     startDate: {
       type: Date,
     },
@@ -65,13 +58,9 @@ const workorderSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
-    isArchived: {
-      type: Boolean,
-      default: false,
-    },
     isCommon: {
       type: Boolean,
-      default:false
+      default: false,
     },
     benefits: {
       type: [String],
@@ -92,10 +81,15 @@ const workorderSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    branch: {
+    pipeline: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Branch",
+      ref: "Pipeline",
       required: true,
+    },
+    customFields: {
+      type: Map,
+      of: mongoose.Schema.Types.Mixed,
+      default: {},
     },
   },
   { timestamps: true }
