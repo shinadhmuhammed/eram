@@ -119,6 +119,8 @@ const disableRecruiter = async (req, res) => {
 
     recruiterUser.accountStatus = newStatus;
     await recruiterUser.save();
+        await clearRecruiterCache(adminId);
+
 
     return res
       .status(200)
