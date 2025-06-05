@@ -47,6 +47,9 @@ const workorderSchema = new mongoose.Schema(
     deadlineDate: {
       type: Date,
     },
+    alertDate: {
+      type: Date,
+    },
     requiredSkills: {
       type: [String],
       default: [],
@@ -84,6 +87,11 @@ const workorderSchema = new mongoose.Schema(
     pipeline: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Pipeline",
+      required: true,
+    },
+    project: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
       required: true,
     },
     customFields: {
