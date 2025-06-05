@@ -3,13 +3,14 @@ const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeli
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
-const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter } = require("../controllers/Recruiters/recruiterController");
+const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter, deleteRecruiter, getRecruiterById } = require("../controllers/Recruiters/recruiterController");
 
 const adminroute = express.Router();
 
 
 adminroute.get('/Pipeline',authenticateToken, authorizeRoles("admin"), getPipeline )
 adminroute.get('/recruiters',authenticateToken, authorizeRoles("admin"), getRecruiter )
+adminroute.get('/recruiters/:id',authenticateToken, authorizeRoles("admin"), getRecruiterById )
 adminroute.get('/Pipeline/:piplineId',authenticateToken, authorizeRoles("admin"), getPipelineById )
 adminroute.get('/branches',authenticateToken, authorizeRoles("admin"), adminBranches )
 adminroute.get('/workOrder',authenticateToken, authorizeRoles("admin"), getWorkorder )
@@ -31,5 +32,6 @@ adminroute.patch("/recruiters/:recruiterId",authenticateToken,authorizeRoles("ad
 
 adminroute.delete('/deletePipeline/:Id',authenticateToken,authorizeRoles("admin"), deletePipeline)
 adminroute.delete('/deleteStage/:Id',authenticateToken,authorizeRoles("admin"), deleteStage)
+adminroute.delete('/recruiters/:Id',authenticateToken,authorizeRoles("admin"), deleteRecruiter)
 
 module.exports = adminroute;
