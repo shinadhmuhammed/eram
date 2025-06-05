@@ -69,7 +69,7 @@ const editRecruiter = async (req, res) => {
 
     const adminId = req.user.id;
 
-    if (!rId || !adminId) {
+    if ( !adminId) {
       return res.status(400).json({ message: "Missing required identifiers!" });
     }
 

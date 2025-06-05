@@ -4,6 +4,7 @@ const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
 const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter, deleteRecruiter, getRecruiterById } = require("../controllers/Recruiters/recruiterController");
+const { addProject, editProject } = require("../controllers/Project/projectController");
 
 const adminroute = express.Router();
 
@@ -20,12 +21,14 @@ adminroute.get('/workOrder',authenticateToken, authorizeRoles("admin"), getWorko
 adminroute.post('/WorkOrder',authenticateToken, authorizeRoles("admin"), createWorkOrder )
 adminroute.post('/addPipeline',authenticateToken,authorizeRoles("admin"), addPipeline )
 adminroute.post('/recruiters',authenticateToken,authorizeRoles("admin"), addRecruiter )
+adminroute.post('/projects',authenticateToken,authorizeRoles("admin"), addProject )
 
 
 adminroute.put("/editPipeline/:pipelineId",authenticateToken,authorizeRoles("admin"), editPipeline)
 adminroute.put("/editWorkOrder/:id",authenticateToken,authorizeRoles("admin"), editWorkOrder)
 adminroute.put("/stagesEdit/:Id",authenticateToken,authorizeRoles("admin"), editStage)
 adminroute.put("/recruiters/:Id",authenticateToken,authorizeRoles("admin"), editRecruiter)
+adminroute.put("/projects/:Id",authenticateToken,authorizeRoles("admin"), editProject)
 
 adminroute.patch("/recruiters/:recruiterId",authenticateToken,authorizeRoles("admin"), disableRecruiter);
 
