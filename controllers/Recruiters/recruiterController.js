@@ -2,9 +2,10 @@ const Workorder = require("../../models/workorderModel");
 
 const addRecruiter = async (req, res) => {
   try {
-    const { companyName, location, email, phoneno, password, adminId, role } =
+    const { fullName,companyName, location, email, phoneno, password, adminId, role } =
       req.body;
     if (
+      !fullName ||
       !companyName ||
       !location ||
       !email ||
@@ -26,6 +27,7 @@ const addRecruiter = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newRecruiter = new User({
+      fullName,
       companyName,
       location,
       email,
@@ -41,7 +43,7 @@ const addRecruiter = async (req, res) => {
       .status(201)
       .json({ message: "User registered successfully", newRecruiter });
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
