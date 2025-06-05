@@ -133,6 +133,7 @@ const disableRecruiter = async (req, res) => {
 
 const deleteRecruiter = async (req, res) => {
   const { Id } = req.params;
+  const adminId = req.user.id;
 
   try {
     const recruiter = await User.findOne({ _id: Id, role: "recruiter" });
