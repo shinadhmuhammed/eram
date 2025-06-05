@@ -103,6 +103,7 @@ const editRecruiter = async (req, res) => {
 };
 
 const disableRecruiter = async (req, res) => {
+  const adminId=req.user.id
   try {
     const { recruiterId } = req.params;
 
