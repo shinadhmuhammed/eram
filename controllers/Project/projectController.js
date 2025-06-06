@@ -90,6 +90,7 @@ const getProject = async (req, res) => {
 const getProjectById = async (req, res) => {
   try {
     const { id } = req.params;
+    const adminId = req.user.id
 
     const findProject = await Project.findById({ _id: id, createdBy: adminId })
 
