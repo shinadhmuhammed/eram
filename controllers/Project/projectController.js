@@ -47,7 +47,6 @@ const editProject = async (req, res) => {
       prefix: prefix,
       createdBy: adminId,
     });
-
     if (existingProjectWithPrefix) {
       return res
         .status(400)
@@ -59,7 +58,7 @@ const editProject = async (req, res) => {
       { name, prefix, description },
       { new: true }
     );
-  
+
 
     if (!updatedProject) {
       return res.status(404).json({ message: "Project not found or unauthorized" });

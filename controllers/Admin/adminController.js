@@ -61,6 +61,7 @@ const getAllAdmin = async (req, res) => {
 
 const createWorkOrder = async (req, res) => {
   try {
+    const adminId = req.user.id;
     const {
       title,
       jobCode,
@@ -116,6 +117,7 @@ const createWorkOrder = async (req, res) => {
       benefits,
       languagesRequired,
       customFields,
+      createdBy:adminId
     });
 
     res.status(201).json({

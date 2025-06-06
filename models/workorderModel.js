@@ -99,6 +99,11 @@ const workorderSchema = new mongoose.Schema(
       of: mongoose.Schema.Types.Mixed,
       default: {},
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    }
   },
   { timestamps: true }
 );
