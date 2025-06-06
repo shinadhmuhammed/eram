@@ -48,6 +48,9 @@ const branchSchema = new mongoose.Schema({
     email: String,
     phone: String,
   },
+  branchOrder:{
+    type:Number
+  }
 }, { timestamps: true });
 
 const Branch = mongoose.model("Branch", branchSchema);

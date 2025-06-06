@@ -117,7 +117,7 @@ const createWorkOrder = async (req, res) => {
       benefits,
       languagesRequired,
       customFields,
-      createdBy:adminId
+      createdBy: adminId
     });
 
     res.status(201).json({

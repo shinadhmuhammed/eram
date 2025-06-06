@@ -7,6 +7,7 @@ const createBranch = async (req, res) => {
     if (err) {
       return res.status(400).json({ message: err.message });
     }
+
     try {
       const {
         name,
@@ -21,6 +22,9 @@ const createBranch = async (req, res) => {
       } = req.body;
 
       const brand_logo = req.file ? req.file.filename : null;
+      const existingBranches = await Branch.find({})
+      const branchLength = existingBranches.length;
+      console.log(branchLength, 'branch')
 
       if (
         !name ||
@@ -58,6 +62,7 @@ const createBranch = async (req, res) => {
           email: contact.email || "",
           phone: contact.phone || "",
         },
+        branchNumber: branchLength + 1
       });
 
       await newBranch.save();
@@ -72,6 +77,8 @@ const createBranch = async (req, res) => {
     }
   });
 };
+
+
 
 const getBranch = async (req, res) => {
   try {
@@ -141,20 +148,38 @@ const editBranch = async (req, res) => {
 };
 
 const deleteBranch = async (req, res) => {
+  
   const branchId = req.params.branchId;
-  try {
-    const branchDelete = await Branch.findByIdAndDelete({ _id: branchId });
-    return res.status(200).json({ message: "Branch deleted successfully...!" });
-  } catch (error) {
-    console.error(error.message);
-    return res
-      .status(500)
-      .json({
-        message: "Server error while deleting branch",
-        error: error.message,
-      });
+
+ try {
+  await Branch.findByIdAndDelete(branchId);
+
+  const remainingBranches = await Branch.find().sort({ branchOrder: 1 });
+
+  const bulkDelete = remainingBranches.map((branch, index) => ({
+    updateOne: {
+      filter: { _id: branch._id },
+      update: { branchOrder: index + 1 },
+    },
+  }));
+
+  if (bulkDelete.length > 0) {
+    await Branch.bulkWrite(bulkOps);
   }
+
+  return res.status(200).json({
+    message: "Branch deleted and branch order updated efficiently.",
+  });
+} catch (error) {
+  console.error(error.message);
+  return res.status(500).json({
+    message: "Server error while deleting branch",
+    error: error.message,
+  });
+}
+
 };
+
 
 const getBranchById = async (req, res) => {
   try {
