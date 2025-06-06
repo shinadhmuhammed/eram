@@ -164,7 +164,7 @@ const deleteBranch = async (req, res) => {
   }));
 
   if (bulkDelete.length > 0) {
-    await Branch.bulkWrite(bulkOps);
+    await Branch.bulkWrite(bulkDelete);
   }
 
   return res.status(200).json({
