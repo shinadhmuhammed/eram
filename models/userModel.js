@@ -50,8 +50,8 @@ const userSchema = new mongoose.Schema({
     ref: "User",
   },
     specialization: {
-    type: String,
-    required: true,
+  type: String,
+  
   },
   qualifications: [
     {
