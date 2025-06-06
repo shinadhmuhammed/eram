@@ -54,11 +54,17 @@ const editProject = async (req, res) => {
         .json({ message: "Prefix already exists under your account!" });
     }
 
-    const updatedProject = await Project.findOneAndUpdate(
-      { _id: id, createdBy: adminId },
-      { name, prefix, description },
-      { new: true }
-    );
+    // const updatedProject = await Project.findOneAndUpdate(
+    //   { _id: id, createdBy: adminId },
+    //   { name, prefix, description },
+    //   { new: true }
+    // );
+
+    const findProject = await Project.findOne({
+      _id: id, createdBy: adminId
+    })
+
+    console.log(findProject,'find')
 
     if (!updatedProject) {
       return res.status(404).json({ message: "Project not found or unauthorized" });
@@ -122,7 +128,7 @@ const deleteProject = async (req, res) => {
       return res.status(404).json({ message: "project not found" })
     }
 
-    await Project.deleteOne({ _id: id, createdBy:adminId })
+    await Project.deleteOne({ _id: id, createdBy: adminId })
     return res.status(200).json({ message: 'project deleted' })
   }
   catch (error) {
