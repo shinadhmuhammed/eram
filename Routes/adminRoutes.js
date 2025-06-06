@@ -34,7 +34,7 @@ adminroute.put("/recruiters/:Id",authenticateToken,authorizeRoles("admin"), edit
 adminroute.put("/projects/:Id",authenticateToken,authorizeRoles("admin"), editProject)
 
 adminroute.patch("/recruiters/:recruiterId",authenticateToken,authorizeRoles("admin"), disableRecruiter);
-adminroute.patch('/project/:projectId',authenticateToken,authorizeRoles("admin"),disableProject)
+adminroute.patch("/project/:projectId",authenticateToken,authorizeRoles("admin"),disableProject)
 
 
 adminroute.delete('/deletePipeline/:Id',authenticateToken,authorizeRoles("admin"), deletePipeline)

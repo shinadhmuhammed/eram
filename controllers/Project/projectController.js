@@ -136,6 +136,10 @@ const disableProject = async (req, res) => {
   try {
     const { projectId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+      return res.status(400).json({ message: "Invalid branch ID" });
+    }
+
     const existingProject = await Project.findOne({
       _id: projectId,
       createdBy: adminId,
