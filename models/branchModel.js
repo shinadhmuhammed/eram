@@ -49,7 +49,7 @@ const branchSchema = new mongoose.Schema({
     phone: String,
   },
   branchOrder:{
-    type:Number
+    type:String
   }
 }, { timestamps: true });
 
