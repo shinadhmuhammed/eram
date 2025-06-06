@@ -69,7 +69,7 @@ const editRecruiter = async (req, res) => {
 
     const adminId = req.user.id;
 
-    if ( !adminId) {
+    if (!adminId) {
       return res.status(400).json({ message: "Missing required identifiers!" });
     }
 
@@ -103,7 +103,7 @@ const editRecruiter = async (req, res) => {
 };
 
 const disableRecruiter = async (req, res) => {
-  const adminId=req.user.id
+  const adminId = req.user.id
   try {
     const { recruiterId } = req.params;
 
@@ -180,15 +180,16 @@ const getRecruiter = async (req, res) => {
 };
 
 
-const getRecruiterById = async (req,res) => {
-  const {Id} = req.params
-try {
-  const recruiter = await User.findOne({_id:Id,role:"recruiter"})
-  return res.status(200).json({ recruiter });
-} catch (error) {
-  console.log(error.message);
-    return res.status(500).json({ message: "server error"});
-}
+const getRecruiterById = async (req, res) => {
+  const { Id } = req.params
+  try {
+    const recruiter = await User.findOne({ _id: Id, role: "recruiter" })
+    console.log(recruiter,'recruiter')
+    return res.status(200).json({ recruiter });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "server error" });
+  }
 }
 
 const editJobpost = async (req, res) => {

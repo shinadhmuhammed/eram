@@ -34,7 +34,7 @@ const addProject = async (req, res) => {
 
 
 const editProject = async (req, res) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   const { name, prefix, description } = req.body;
   const adminId = req.user.id;
 
@@ -73,5 +73,51 @@ const editProject = async (req, res) => {
   }
 };
 
+const getProject = async (req, res) => {
+  try {
+    const allProjects = await Project.find({})
+    return res.status(200).json({ allProjects })
+  }
+  catch (error) {
+    console.log(error.message)
+    return res.status(500).json({ message: error.message })
+  }
+}
 
-module.exports = { addProject ,editProject};
+const getProjectById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const findProject = await Project.findById({ _id: id })
+
+    if (!findProject) {
+      return res.status(404).json({ message: "project not found!!" })
+    }
+
+    return res.status(200).json({ findProject })
+
+  }
+  catch (error) {
+    console.log(error.message)
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+const deleteProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const findProject = await Project.findById(id)
+    if (!findProject) {
+      return res.status(404).json({ message: "project not found" })
+    }
+    await Project.deleteOne({ _id: id })
+    return res.status(200).json({ message: 'project deleted' })
+  }
+  catch (error) {
+    console.log(error.message)
+    return res.status(500).json({ message: error.message })
+  }
+}
+
+
+module.exports = { addProject, editProject, getProject, getProjectById, deleteProject };
