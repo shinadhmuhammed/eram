@@ -75,7 +75,10 @@ const editProject = async (req, res) => {
 
 const getProject = async (req, res) => {
   try {
-    const allProjects = await Project.find({})
+    const adminId = req.user.id
+    const allProjects = await Project.find({
+      createdBy: adminId
+    })
     return res.status(200).json({ allProjects })
   }
   catch (error) {
@@ -88,7 +91,7 @@ const getProjectById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const findProject = await Project.findById({ _id: id })
+    const findProject = await Project.findById({ _id: id, createdBy: adminId })
 
     if (!findProject) {
       return res.status(404).json({ message: "project not found!!" })
@@ -106,11 +109,19 @@ const getProjectById = async (req, res) => {
 const deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
-    const findProject = await Project.findById(id)
+
+    const adminId = req.user.id;
+
+    const findProject = await Project.findById({
+      _id: id,
+      createdBy: adminId
+    })
+
     if (!findProject) {
       return res.status(404).json({ message: "project not found" })
     }
-    await Project.deleteOne({ _id: id })
+
+    await Project.deleteOne({ _id: id, createdBy:adminId })
     return res.status(200).json({ message: 'project deleted' })
   }
   catch (error) {
