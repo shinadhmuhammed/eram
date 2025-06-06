@@ -131,5 +131,33 @@ const deleteProject = async (req, res) => {
   }
 }
 
+const disableProject = async (req, res) => {
+  const adminId = req.user.id
+  try {
+    const { projectId } = req.params;
 
-module.exports = { addProject, editProject, getProject, getProjectById, deleteProject };
+    const existingProject = await Project.findOne({
+      _id: projectId,
+      createdBy: adminId,
+    });
+    if (!existingProject) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    const newStatus =
+      existingProject.status === "active" ? "inActive" : "active";
+
+    existingProject.status = newStatus;
+    await existingProject.save();
+
+    return res
+      .status(200)
+      .json({ message: "Admin marked as disabled", data: existingProject });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+module.exports = { addProject, editProject, getProject, getProjectById, deleteProject, disableProject };

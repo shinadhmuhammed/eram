@@ -4,7 +4,7 @@ const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
 const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter, deleteRecruiter, getRecruiterById } = require("../controllers/Recruiters/recruiterController");
-const { addProject, editProject,deleteProject, getProject, getProjectById } = require("../controllers/Project/projectController");
+const { addProject, editProject,deleteProject, getProject, getProjectById,disableProject } = require("../controllers/Project/projectController");
 
 const adminroute = express.Router();
 
@@ -34,6 +34,7 @@ adminroute.put("/recruiters/:Id",authenticateToken,authorizeRoles("admin"), edit
 adminroute.put("/projects/:Id",authenticateToken,authorizeRoles("admin"), editProject)
 
 adminroute.patch("/recruiters/:recruiterId",authenticateToken,authorizeRoles("admin"), disableRecruiter);
+adminroute.patch('/project/:projectId',authenticateToken,authorizeRoles("admin"),disableProject)
 
 
 adminroute.delete('/deletePipeline/:Id',authenticateToken,authorizeRoles("admin"), deletePipeline)

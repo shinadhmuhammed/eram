@@ -148,36 +148,35 @@ const editBranch = async (req, res) => {
 };
 
 const deleteBranch = async (req, res) => {
-  
+
   const branchId = req.params.branchId;
 
- try {
-  await Branch.findByIdAndDelete(branchId);
+  try {
+    await Branch.findByIdAndDelete(branchId);
 
-  const remainingBranches = await Branch.find().sort({ branchOrder: 1 });
+    const remainingBranches = await Branch.find().sort({ branchOrder: 1 });
 
-  const bulkDelete = remainingBranches.map((branch, index) => ({
-    updateOne: {
-      filter: { _id: branch._id },
-      update: { branchOrder: index + 1 },
-    },
-  }));
+    const bulkDelete = remainingBranches.map((branch, index) => ({
+      updateOne: {
+        filter: { _id: branch._id },
+        update: { branchOrder: index + 1 },
+      },
+    }));
 
-  if (bulkDelete.length > 0) {
-    await Branch.bulkWrite(bulkDelete);
+    if (bulkDelete.length > 0) {
+      await Branch.bulkWrite(bulkDelete);
+    }
+
+    return res.status(200).json({
+      message: "Branch deleted and branch order updated efficiently.",
+    });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({
+      message: "Server error while deleting branch",
+      error: error.message,
+    });
   }
-
-  return res.status(200).json({
-    message: "Branch deleted and branch order updated efficiently.",
-  });
-} catch (error) {
-  console.error(error.message);
-  return res.status(500).json({
-    message: "Server error while deleting branch",
-    error: error.message,
-  });
-}
-
 };
 
 
