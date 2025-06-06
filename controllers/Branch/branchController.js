@@ -62,7 +62,7 @@ const createBranch = async (req, res) => {
           email: contact.email || "",
           phone: contact.phone || "",
         },
-        branchNumber: branchLength + 1
+        branchOrder: branchLength + 1
       });
 
       await newBranch.save();
