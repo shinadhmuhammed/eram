@@ -34,7 +34,7 @@ const addProject = async (req, res) => {
 
 
 const editProject = async (req, res) => {
-  const { id } = req.params;
+  const { Id } = req.params;
   const { name, prefix, description } = req.body;
   const adminId = req.user.id;
 
@@ -43,7 +43,7 @@ const editProject = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields!" });
 
     const existingProjectWithPrefix = await Project.findOne({
-      _id: { $ne: id },
+      _id: { $ne: Id },
       prefix: prefix,
       createdBy: adminId,
     });
@@ -54,17 +54,12 @@ const editProject = async (req, res) => {
         .json({ message: "Prefix already exists under your account!" });
     }
 
-    // const updatedProject = await Project.findOneAndUpdate(
-    //   { _id: id, createdBy: adminId },
-    //   { name, prefix, description },
-    //   { new: true }
-    // );
-
-    const findProject = await Project.findOne({
-      _id: id, createdBy: adminId
-    })
-
-    console.log(findProject,'find')
+    const updatedProject = await Project.findOneAndUpdate(
+      { _id: Id, createdBy: adminId },
+      { name, prefix, description },
+      { new: true }
+    );
+  
 
     if (!updatedProject) {
       return res.status(404).json({ message: "Project not found or unauthorized" });
