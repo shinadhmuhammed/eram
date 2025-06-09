@@ -327,6 +327,76 @@ const verifyUpdateProfile = async (req, res) => {
   }
 };
 
+
+const forgotPassword = async (req,res) => {
+const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    let subject = "ERAM - Password Reset OTP";
+    const text = `Hi ${user.firstName},\n\nYour OTP for password reset is: ${otp}\nIt will expire in 3 minutes.\n\nThanks,\nERAM Team`;
+
+    await sendMail(email, subject, text);
+
+    await OTP.findOneAndUpdate(
+      { email },
+      { otp, createdAt: new Date() },
+      { upsert: true }
+    );
+
+    res.status(200).json({ message: "OTP sent to your email" });
+  } catch (err) {
+    console.error("Error sending forgot password OTP:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+const verifyForgotPasswordOtp = async (req, res) => {
+  const { email, otp } = req.body;
+console.log(req.body)
+  try {
+    const otpRecord = await OTP.findOne({ email });
+
+    if (!otpRecord || otpRecord.otp !== otp) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+      await OTP.deleteOne({ email });
+
+    res.status(200).json({ message: "OTP verified" });
+  } catch (err) {
+    console.error("Error verifying OTP:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.passwordHash = hashedPassword;
+    await user.save();
+
+    await OTP.deleteOne({ email, type: "forgot-password" });
+
+    res.status(200).json({ message: "Password has been reset successfully" });
+  } catch (err) {
+    console.error("Error resetting password:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
 module.exports = {
   register,
   verifyOtp,
@@ -336,4 +406,7 @@ module.exports = {
   logout,
   requestUpdateProfile,
   verifyUpdateProfile,
+  forgotPassword,
+  verifyForgotPasswordOtp,
+  resetPassword
 };
