@@ -35,6 +35,19 @@ const workorderSchema = new mongoose.Schema(
     Education: {
       type: String,
     },
+    salaryType: {
+      type: String,
+      enum: [
+        "annual",
+        "monthly",
+        "weekly",
+        "daily",
+        "hourly",
+        "contract",
+        "commission",
+      ],
+      required: true,
+    },
     annualSalary: {
       type: String,
     },
