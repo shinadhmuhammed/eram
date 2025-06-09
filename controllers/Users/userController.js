@@ -79,7 +79,7 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password,branch } = req.body;
+    const { email, password,branchId } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(403).json({ message: "Invalid Email" });
@@ -90,8 +90,8 @@ const login = async (req, res) => {
       return res.status(403).json({ message: "Invalid Password" });
     }
 
-    if (branch) {
-      await User.updateOne({ email }, { $set: { branch } });
+    if (branchId) {
+      await User.updateOne({ email }, { $set: {branch: branchId } });
     }
 
     const token = jwt.sign(
@@ -364,7 +364,6 @@ console.log(req.body)
     if (!otpRecord || otpRecord.otp !== otp) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
-      await OTP.deleteOne({ email });
 
     res.status(200).json({ message: "OTP verified" });
   } catch (err) {
@@ -386,7 +385,7 @@ const resetPassword = async (req, res) => {
     user.passwordHash = hashedPassword;
     await user.save();
 
-    await OTP.deleteOne({ email, type: "forgot-password" });
+    await OTP.deleteOne({ email });
 
     res.status(200).json({ message: "Password has been reset successfully" });
   } catch (err) {
