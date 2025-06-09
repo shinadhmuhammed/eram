@@ -1,6 +1,6 @@
 const Project = require("../../models/projectModel");
 const mongoose = require("mongoose");
-
+const Workorder = require("../../models/workorderModel");
 
 const addProject = async (req, res) => {
   const { name, prefix, description } = req.body;
@@ -14,9 +14,9 @@ const addProject = async (req, res) => {
       createdBy: adminId,
     });
     if (samePrefix)
-      return res
-        .status(500)
-        .json({ message: "prefix already exists with the same variable name!" });
+      return res.status(500).json({
+        message: "prefix already exists with the same variable name!",
+      });
 
     const newProject = new Project({
       name,
@@ -33,6 +33,7 @@ const addProject = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 const editProject = async (req, res) => {
@@ -61,14 +62,16 @@ const editProject = async (req, res) => {
       { new: true }
     );
 
-
     if (!updatedProject) {
-      return res.status(404).json({ message: "Project not found or unauthorized" });
+      return res
+        .status(404)
+        .json({ message: "Project not found or unauthorized" });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Project updated successfully", project: updatedProject });
+    return res.status(200).json({
+      message: "Project updated successfully",
+      project: updatedProject,
+    });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ message: "Server error" });
@@ -77,37 +80,34 @@ const editProject = async (req, res) => {
 
 const getProject = async (req, res) => {
   try {
-    const adminId = req.user.id
+    const adminId = req.user.id;
     const allProjects = await Project.find({
-      createdBy: adminId
-    })
-    return res.status(200).json({ allProjects })
+      createdBy: adminId,
+    });
+    return res.status(200).json({ allProjects });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
   }
-  catch (error) {
-    console.log(error.message)
-    return res.status(500).json({ message: error.message })
-  }
-}
+};
 
 const getProjectById = async (req, res) => {
   try {
     const { id } = req.params;
-    const adminId = req.user.id
+    const adminId = req.user.id;
 
-    const findProject = await Project.findById({ _id: id, createdBy: adminId })
+    const findProject = await Project.findById({ _id: id, createdBy: adminId });
 
     if (!findProject) {
-      return res.status(404).json({ message: "project not found!!" })
+      return res.status(404).json({ message: "project not found!!" });
     }
 
-    return res.status(200).json({ findProject })
-
+    return res.status(200).json({ findProject });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
   }
-  catch (error) {
-    console.log(error.message)
-    return res.status(500).json({ message: error.message })
-  }
-}
+};
 
 const deleteProject = async (req, res) => {
   try {
@@ -117,24 +117,23 @@ const deleteProject = async (req, res) => {
 
     const findProject = await Project.findById({
       _id: id,
-      createdBy: adminId
-    })
+      createdBy: adminId,
+    });
 
     if (!findProject) {
-      return res.status(404).json({ message: "project not found" })
+      return res.status(404).json({ message: "project not found" });
     }
 
-    await Project.deleteOne({ _id: id, createdBy: adminId })
-    return res.status(200).json({ message: 'project deleted' })
+    await Project.deleteOne({ _id: id, createdBy: adminId });
+    return res.status(200).json({ message: "project deleted" });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
   }
-  catch (error) {
-    console.log(error.message)
-    return res.status(500).json({ message: error.message })
-  }
-}
+};
 
 const disableProject = async (req, res) => {
-  const adminId = req.user.id
+  const adminId = req.user.id;
   try {
     const { projectId } = req.params;
 
@@ -165,5 +164,11 @@ const disableProject = async (req, res) => {
   }
 };
 
-
-module.exports = { addProject, editProject, getProject, getProjectById, deleteProject, disableProject };
+module.exports = {
+  addProject,
+  editProject,
+  getProject,
+  getProjectById,
+  deleteProject,
+  disableProject,
+};

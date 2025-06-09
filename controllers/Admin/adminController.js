@@ -60,7 +60,7 @@ const getAllAdmin = async (req, res) => {
 };
 
 const createWorkOrder = async (req, res) => {
-  console.log(req.body,'hi body =-=-=')
+  console.log(req.body, "hi body =-=-=");
   try {
     const adminId = req.user.id;
     const {
@@ -120,9 +120,9 @@ const createWorkOrder = async (req, res) => {
       isCommon,
       benefits,
       languagesRequired,
-      workOrderStatus:WorkorderStatus,
+      workOrderStatus: WorkorderStatus,
       customFields,
-      createdBy: adminId
+      createdBy: adminId,
     });
 
     res.status(201).json({
@@ -166,8 +166,8 @@ const editWorkOrder = async (req, res) => {
 const getWorkorder = async (req, res) => {
   try {
     const workorders = await Workorder.find({})
-      .populate("project", "name")       
-      .populate("pipeline");  
+      .populate("project", "name")
+      .populate("pipeline");
 
     if (!workorders || workorders.length === 0) {
       return res.status(404).json({ message: "No workorders found" });
@@ -180,7 +180,44 @@ const getWorkorder = async (req, res) => {
   }
 };
 
+const getWorkorderById = async (req, res) => {
+  const { Id } = req.params;
+  try {
+    const workOrder = await Workorder.findById(Id);
+    if (!workOrder) {
+      return res.status(404).json({ message: "Work order not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "work order by id done", workOrder });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error..!" });
+  }
+};
 
+const workorderPublish = async (req, res) => {
+  const { Id } = req.params;
+
+  try {
+    const workOrder = await Workorder.findByIdAndUpdate(
+      Id,
+      { workOrderStatus: "published" },
+      { new: true }
+    );
+
+    if (!workOrder) {
+      return res.status(404).json({ message: "Workorder not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Published successfully", order: workOrder });
+  } catch (error) {
+    console.error("Error publishing workorder:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 
 const editStage = async (req, res) => {
   const { Id: stageId } = req.params;
@@ -240,8 +277,6 @@ const getPipeline = async (req, res) => {
   }
 };
 
-
-
 const getPipelineById = async (req, res) => {
   const { piplineId } = req.params;
   try {
@@ -294,7 +329,6 @@ const adminBranches = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
@@ -483,6 +517,8 @@ module.exports = {
   getPipelineById,
   adminBranches,
   getWorkorder,
+  getWorkorderById,
+  workorderPublish,
   addPipeline,
   editAdmin,
   disableAdmin,

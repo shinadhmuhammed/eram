@@ -1,5 +1,5 @@
 const express = require("express");
-const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder} = require('../controllers/Admin/adminController');
+const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById} = require('../controllers/Admin/adminController');
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
@@ -15,6 +15,7 @@ adminroute.get('/recruiters/:id',authenticateToken, authorizeRoles("admin"), get
 adminroute.get('/Pipeline/:piplineId',authenticateToken, authorizeRoles("admin"), getPipelineById )
 adminroute.get('/branches',authenticateToken, authorizeRoles("admin"), adminBranches )
 adminroute.get('/workOrder',authenticateToken, authorizeRoles("admin"), getWorkorder )
+adminroute.get('/workOrder/:Id',authenticateToken, authorizeRoles("admin"), getWorkorderById)
 adminroute.get('/projects',authenticateToken,authorizeRoles("admin"), getProject)
 adminroute.get('/project/:id',authenticateToken,authorizeRoles("admin"),getProjectById)
 
@@ -35,6 +36,8 @@ adminroute.put("/projects/:Id",authenticateToken,authorizeRoles("admin"), editPr
 
 adminroute.patch("/recruiters/:recruiterId",authenticateToken,authorizeRoles("admin"), disableRecruiter);
 adminroute.patch("/project/:projectId",authenticateToken,authorizeRoles("admin"),disableProject)
+adminroute.patch('/publish/:Id',authenticateToken,authorizeRoles("admin"), workorderPublish)
+
 
 
 adminroute.delete('/deletePipeline/:Id',authenticateToken,authorizeRoles("admin"), deletePipeline)
