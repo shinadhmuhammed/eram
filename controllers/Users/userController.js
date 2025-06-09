@@ -79,7 +79,7 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password,branch } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(403).json({ message: "Invalid Email" });
@@ -88,6 +88,10 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(403).json({ message: "Invalid Password" });
+    }
+
+    if (branch) {
+      await User.updateOne({ email }, { $set: { branch } });
     }
 
     const token = jwt.sign(
@@ -100,7 +104,6 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-
 
     if (user.role === "super_admin") {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -152,21 +155,20 @@ const login = async (req, res) => {
   }
 };
 
-
-const logout = async (req,res) => {
-  const role = req.user.role
+const logout = async (req, res) => {
+  const role = req.user.role;
   try {
     res.clearCookie(role, {
-    httpOnly: true,
-    secure: false,    
-    sameSite: 'Lax', 
-  });
-  res.status(200).json({ message: 'Logged out successfully' });
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 const verifyAdminLoginOtp = async (req, res) => {
   const { email, otp } = req.body;
@@ -297,15 +299,22 @@ const verifyUpdateProfile = async (req, res) => {
     await user.save();
 
     await OTP.deleteOne({ email: userEmail });
-    const newToken = jwt.sign(
+
+     const newToken = jwt.sign(
       { email: user.email, id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
+    res.cookie(user.role, newToken, {
+      httpOnly: true,
+      secure: false, 
+      sameSite: "Lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, 
+    });
+
     res.status(200).json({
       message: "Profile updated successfully",
-      token: newToken,
       updatedUser: {
         email: user.email,
         role: user.role,
