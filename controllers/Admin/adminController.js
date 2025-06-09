@@ -165,16 +165,21 @@ const editWorkOrder = async (req, res) => {
 
 const getWorkorder = async (req, res) => {
   try {
-    const getAllWorkorder = await Workorder.find({})
-      .populate("addedRecruiters", "name email")
-      .populate("pipeline", "name");
-    if (!getAllWorkorder)
-      return res.status(404).json({ message: "Workorder not found" });
-    return res.status(200).json({ getAllWorkorder });
+    const workorders = await Workorder.find({})
+      .populate("project", "name")       
+      .populate("pipeline");  
+
+    if (!workorders || workorders.length === 0) {
+      return res.status(404).json({ message: "No workorders found" });
+    }
+
+    return res.status(200).json({ workorders });
   } catch (error) {
+    console.error("Error fetching workorders:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 const editStage = async (req, res) => {
