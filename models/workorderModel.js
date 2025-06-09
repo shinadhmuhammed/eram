@@ -11,7 +11,7 @@ const workorderSchema = new mongoose.Schema(
     },
     workplace: {
       type: String,
-      enum: ["WorkPlace", "Hybrid", "Remote"],
+      enum: ["on-site", "hybrid", "remote"],
     },
     officeLocation: {
       type: String,
@@ -75,15 +75,14 @@ const workorderSchema = new mongoose.Schema(
     },
     workOrderStatus: {
       type: String,
-      enum: ["active", "suspended", "deleted"],
-      default: "active",
+      enum: ["draft", "published",],
+      required:true
     },
-    assignedRecruiters: [
+    assignedRecruiters: 
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
-    ],
     pipeline: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Pipeline",

@@ -87,6 +87,7 @@ const createWorkOrder = async (req, res) => {
       isArchived,
       isCommon,
       benefits,
+      WorkorderStatus,
       languagesRequired,
       customFields,
     } = req.body;
@@ -116,6 +117,7 @@ const createWorkOrder = async (req, res) => {
       isCommon,
       benefits,
       languagesRequired,
+      workOrderStatus:WorkorderStatus,
       customFields,
       createdBy: adminId
     });
