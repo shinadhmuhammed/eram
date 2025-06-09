@@ -132,6 +132,24 @@ const deleteProject = async (req, res) => {
   }
 };
 
+const deleteWorkorder = async (req, res) => {
+  const { Id } = req.params;
+
+  try {
+    const result = await Workorder.findByIdAndDelete(Id);
+
+    if (!result) {
+      return res.status(404).json({ message: "Workorder not found" });
+    }
+
+    return res.status(200).json({ message: "Workorder deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting workorder:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 const disableProject = async (req, res) => {
   const adminId = req.user.id;
   try {
@@ -170,5 +188,6 @@ module.exports = {
   getProject,
   getProjectById,
   deleteProject,
+  deleteWorkorder,
   disableProject,
 };

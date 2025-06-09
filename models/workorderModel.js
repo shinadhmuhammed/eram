@@ -91,6 +91,11 @@ const workorderSchema = new mongoose.Schema(
       enum: ["draft", "published"],
       required: true,
     },
+    isActive: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "inactive",
+    },
     assignedRecruiters: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
