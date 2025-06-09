@@ -16,10 +16,10 @@ const { getBranch, getjobByBranchID } = require("../controllers/Branch/branchCon
 const authorizeRoles = require("../middleware/authorizedRoles");
 const router = express.Router();
 
+
+
 router.get("/branch", getBranch);
 router.get("/branchById",authenticateToken,authorizeRoles('candidate'), getjobByBranchID);
-
-
 
 router.post("/Register", register);
 router.post("/verifyOtp", verifyOtp);

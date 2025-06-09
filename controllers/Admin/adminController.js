@@ -60,6 +60,7 @@ const getAllAdmin = async (req, res) => {
 };
 
 const createWorkOrder = async (req, res) => {
+  console.log(req.body,'hi body =-=-=')
   try {
     const adminId = req.user.id;
     const {
@@ -74,13 +75,13 @@ const createWorkOrder = async (req, res) => {
       Experience,
       Education,
       annualSalary,
-      pipelineId,
+      pipeline,
       startDate,
       endDate,
       deadlineDate,
       alertDate,
       assignedId,
-      projectId,
+      project,
       branchId,
       requiredSkills,
       jobRequirements,
@@ -110,8 +111,8 @@ const createWorkOrder = async (req, res) => {
       deadlineDate,
       alertDate,
       assignedRecruiters: assignedId,
-      pipeline: pipelineId,
-      project: projectId,
+      pipeline,
+      project,
       branch: branchId,
       requiredSkills,
       jobRequirements,

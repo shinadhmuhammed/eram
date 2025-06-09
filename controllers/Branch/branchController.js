@@ -1,4 +1,5 @@
 const Branch = require("../../models/branchModel");
+const User = require("../../models/userModel");
 const { upload } = require("../../utils/multer");
 const mongoose = require("mongoose");
 
@@ -91,8 +92,11 @@ const getBranch = async (req, res) => {
 };
 
 const getjobByBranchID = async (req,res) => {
+  const email = req.user.email;
   try {
-    
+    const user = await User.find({email:email})
+
+    const jobPosts = await Branch.find({})
   } catch (error) {
     console.error(error)
     return res.status(500).json({message: "Internal server error. cant get the job posts"})

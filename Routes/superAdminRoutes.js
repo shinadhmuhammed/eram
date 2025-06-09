@@ -38,6 +38,6 @@ superadminroute.patch("/admin",authenticateToken,authorizeRoles("super_admin"), 
 superadminroute.put("/admin/:adminId",authenticateToken, authorizeRoles("super_admin"),editAdmin);
 superadminroute.put("/branch/:id",authenticateToken, authorizeRoles("super_admin"),editBranch);
 
-superadminroute.delete("/branch/:branchId",authenticateToken, deleteBranch);
+superadminroute.delete("/branch/:branchId",authenticateToken,authorizeRoles("super_admin"), deleteBranch);
 
 module.exports = superadminroute;

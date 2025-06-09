@@ -75,14 +75,13 @@ const workorderSchema = new mongoose.Schema(
     },
     workOrderStatus: {
       type: String,
-      enum: ["draft", "published",],
-      required:true
+      enum: ["draft", "published"],
+      required: true,
     },
-    assignedRecruiters: 
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
+    assignedRecruiters: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     pipeline: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Pipeline",
@@ -96,18 +95,17 @@ const workorderSchema = new mongoose.Schema(
     branch: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Branch",
-      required: true,
     },
     customFields: {
-      type: Map,
-      of: mongoose.Schema.Types.Mixed,
-      default: {},
+      type: [mongoose.Schema.Types.Mixed],
+      default: [],
     },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    }
+    },
   },
   { timestamps: true }
 );
