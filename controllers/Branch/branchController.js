@@ -90,6 +90,15 @@ const getBranch = async (req, res) => {
   }
 };
 
+const getjobByBranchID = async (req,res) => {
+  try {
+    
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({message: "Internal server error. cant get the job posts"})
+  }
+}
+
 const editBranch = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
@@ -202,6 +211,7 @@ const getBranchById = async (req, res) => {
 module.exports = {
   createBranch,
   getBranch,
+  getjobByBranchID,
   editBranch,
   deleteBranch,
   getBranchById,

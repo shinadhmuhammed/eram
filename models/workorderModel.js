@@ -93,6 +93,11 @@ const workorderSchema = new mongoose.Schema(
       ref: "Project",
       required: true,
     },
+    branch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Branch",
+      required: true,
+    },
     customFields: {
       type: Map,
       of: mongoose.Schema.Types.Mixed,

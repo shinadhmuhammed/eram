@@ -12,10 +12,12 @@ const {
   resetPassword,
 } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
-const { getBranch } = require("../controllers/Branch/branchController");
+const { getBranch, getjobByBranchID } = require("../controllers/Branch/branchController");
+const authorizeRoles = require("../middleware/authorizedRoles");
 const router = express.Router();
 
 router.get("/branch", getBranch);
+router.get("/branchById",authenticateToken,authorizeRoles('candidate'), getjobByBranchID);
 
 
 

@@ -79,7 +79,7 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password,branchId } = req.body;
+    const { email, password, branchId } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(403).json({ message: "Invalid Email" });
@@ -91,7 +91,17 @@ const login = async (req, res) => {
     }
 
     if (branchId) {
-      await User.updateOne({ email }, { $set: {branch: branchId } });
+      if (!user.branch) {
+        await User.updateOne({ email }, { $set: { branch: branchId } });
+      } else {
+        if (user.branch.toString() !== branchId) {
+          return res
+            .status(403)
+            .json({
+              message: "You cannot log in because your selected branch does not match our records.",
+            });
+        }
+      }
     }
 
     const token = jwt.sign(
@@ -300,7 +310,7 @@ const verifyUpdateProfile = async (req, res) => {
 
     await OTP.deleteOne({ email: userEmail });
 
-     const newToken = jwt.sign(
+    const newToken = jwt.sign(
       { email: user.email, id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -308,9 +318,9 @@ const verifyUpdateProfile = async (req, res) => {
 
     res.cookie(user.role, newToken, {
       httpOnly: true,
-      secure: false, 
+      secure: false,
       sameSite: "Lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
@@ -327,9 +337,8 @@ const verifyUpdateProfile = async (req, res) => {
   }
 };
 
-
-const forgotPassword = async (req,res) => {
-const { email } = req.body;
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
 
   try {
     const user = await User.findOne({ email });
@@ -353,11 +362,11 @@ const { email } = req.body;
     console.error("Error sending forgot password OTP:", err);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 const verifyForgotPasswordOtp = async (req, res) => {
   const { email, otp } = req.body;
-console.log(req.body)
+  console.log(req.body);
   try {
     const otpRecord = await OTP.findOne({ email });
 
@@ -394,8 +403,6 @@ const resetPassword = async (req, res) => {
   }
 };
 
-
-
 module.exports = {
   register,
   verifyOtp,
@@ -407,5 +414,5 @@ module.exports = {
   verifyUpdateProfile,
   forgotPassword,
   verifyForgotPasswordOtp,
-  resetPassword
+  resetPassword,
 };
