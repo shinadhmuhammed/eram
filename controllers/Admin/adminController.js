@@ -160,6 +160,20 @@ const editWorkOrder = async (req, res) => {
   }
 };
 
+const getWorkorder = async (req, res) => {
+  try {
+    const getAllWorkorder = await Workorder.find({})
+      .populate("addedRecruiters", "name email")
+      .populate("pipeline", "name");
+    if (!getAllWorkorder)
+      return res.status(404).json({ message: "Workorder not found" });
+    return res.status(200).json({ getAllWorkorder });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 const editStage = async (req, res) => {
   const { Id: stageId } = req.params;
   const { name, order, description, requiredDocuments } = req.body;
@@ -273,18 +287,6 @@ const adminBranches = async (req, res) => {
   }
 };
 
-const getWorkorder = async (req, res) => {
-  try {
-    const getAllWorkorder = await Workorder.find({})
-      .populate("addedRecruiters", "name email")
-      .populate("pipeline", "name");
-    if (!getAllWorkorder)
-      return res.status(404).json({ message: "Workorder not found" });
-    return res.status(200).json({ getAllWorkorder });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
 
 const addPipeline = async (req, res) => {
   const { name, stages } = req.body;
