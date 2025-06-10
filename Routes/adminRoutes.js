@@ -1,5 +1,5 @@
 const express = require("express");
-const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById, disableWorkorder} = require('../controllers/Admin/adminController');
+const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById, disableWorkorder, addCandidate, bulkCandidate} = require('../controllers/Admin/adminController');
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
@@ -26,6 +26,8 @@ adminroute.post('/WorkOrder',authenticateToken, authorizeRoles("admin"), createW
 adminroute.post('/addPipeline',authenticateToken,authorizeRoles("admin"), addPipeline )
 adminroute.post('/recruiters',authenticateToken,authorizeRoles("admin"), addRecruiter )
 adminroute.post('/projects',authenticateToken,authorizeRoles("admin"), addProject )
+adminroute.post('/candidate',authenticateToken,authorizeRoles("admin"), addCandidate )
+adminroute.post('/Candidate/bulk',authenticateToken,authorizeRoles("admin"),  bulkCandidate )
 
 
 adminroute.put("/editPipeline/:pipelineId",authenticateToken,authorizeRoles("admin"), editPipeline)

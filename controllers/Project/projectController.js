@@ -35,7 +35,6 @@ const addProject = async (req, res) => {
 };
 
 
-
 const editProject = async (req, res) => {
   const { Id } = req.params;
   const { name, prefix, description } = req.body;
@@ -148,7 +147,6 @@ const deleteWorkorder = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 const disableProject = async (req, res) => {
   const adminId = req.user.id;

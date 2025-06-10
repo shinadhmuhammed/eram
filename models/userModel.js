@@ -49,9 +49,8 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-    specialization: {
-  type: String,
-  
+  specialization: {
+    type: String,
   },
   qualifications: [
     {
@@ -64,7 +63,6 @@ const userSchema = new mongoose.Schema({
   resumeUrl: String,
   experienceYears: Number,
 
-  // Client||Company fields
   companyName: String,
   companyWebsite: String,
 

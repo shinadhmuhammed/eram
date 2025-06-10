@@ -538,6 +538,82 @@ const getAdminById = async (req, res) => {
   }
 };
 
+const addCandidate = async (req, res) => {
+  const { fullName, email, phone, password } = req.body;
+  const adminId = req.user.id;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    const candidate = await User.create({
+      fullName,
+      email,
+      phone,
+      passwordHash: hashedPassword,
+      role:"candidate",
+      createdBy: adminId,
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Candidate added successfully..!", candidate });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const bulkCandidate = async (req, res) => {
+  const adminId = req.user.id;
+  const candidates = req.body.candidates;
+
+  try {
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return res.status(400).json({ message: "No candidates provided" });
+    }
+
+    const candidatesToInsert = await Promise.all(
+      candidates.map(async (candidate) => {
+        const existingUser = await User.findOne({ email: candidate.email });
+        if (existingUser) return null;
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(candidate.password, salt);
+
+        return {
+          fullName: candidate.fullName,
+          email: candidate.email,
+          phone: candidate.phone,
+          passwordHash: hashedPassword,
+          role: "candidate",
+          createdBy: adminId,
+        };
+      })
+    );
+
+    const filteredCandidates = candidatesToInsert.filter(Boolean);
+
+    if (filteredCandidates.length === 0) {
+      return res.status(400).json({ message: "All emails already registered" });
+    }
+
+    const result = await User.insertMany(filteredCandidates);
+
+    return res.status(201).json({
+      message: "Bulk candidates added successfully",
+      count: result.length,
+      candidates: result,
+    });
+  } catch (error) {
+    console.error("Bulk Candidate Error:", error.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   addAdmin,
   getAllAdmin,
@@ -558,4 +634,6 @@ module.exports = {
   deletePipeline,
   editStage,
   deleteStage,
+  addCandidate,
+  bulkCandidate,
 };
