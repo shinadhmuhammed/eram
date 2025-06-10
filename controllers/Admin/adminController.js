@@ -541,7 +541,17 @@ const getAdminById = async (req, res) => {
 };
 
 const addCandidate = async (req, res) => {
-  const { fullName, email, phone, password, role } = req.body;
+  const {
+    fullName,
+    email,
+    phone,
+    password,
+    role,
+    companyName,
+    specialization,
+    qualifications,
+    experience,
+  } = req.body;
   const adminId = req.user.id;
   try {
     const existingUser = await User.findOne({ email });
@@ -557,6 +567,10 @@ const addCandidate = async (req, res) => {
       phone,
       passwordHash: hashedPassword,
       role,
+      companyName,
+      specialization,
+      qualifications,
+      experience,
       createdBy: adminId,
     });
 
