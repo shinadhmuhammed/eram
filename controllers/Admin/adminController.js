@@ -224,10 +224,10 @@ const workorderPublish = async (req, res) => {
 };
 
 const disableWorkorder = async (req, res) => {
-  const { id } = req.params;
+  const { Id } = req.params;
 
   try {
-    const workorder = await Workorder.findById(id);
+    const workorder = await Workorder.findById(Id);
 
     if (!workorder) {
       return res.status(404).json({ message: "Workorder not found" });
