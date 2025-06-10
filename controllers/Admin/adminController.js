@@ -60,7 +60,6 @@ const getAllAdmin = async (req, res) => {
 };
 
 const createWorkOrder = async (req, res) => {
-  console.log(req.body, "hi body =-=-=");
   try {
     const adminId = req.user.id;
     const {
@@ -171,7 +170,7 @@ const getWorkorder = async (req, res) => {
   try {
     const workorders = await Workorder.find({ createdBy: adminId })
       .populate("project", "name")
-      .populate("pipeline");
+      .populate("pipeline").populate("assignedRecruiters","fullName")
 
     if (!workorders || workorders.length === 0) {
       return res.status(404).json({ message: "No workorders found" });
