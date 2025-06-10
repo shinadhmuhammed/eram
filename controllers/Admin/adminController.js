@@ -139,7 +139,7 @@ const createWorkOrder = async (req, res) => {
 const editWorkOrder = async (req, res) => {
   const { id } = req.params;
 
-  console.log(req.body,'hi body')
+  console.log(req.body, "hi body");
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid work order ID" });
@@ -172,7 +172,8 @@ const getWorkorder = async (req, res) => {
   try {
     const workorders = await Workorder.find({ createdBy: adminId })
       .populate("project", "name")
-      .populate("pipeline").populate("assignedRecruiters","fullName")
+      .populate("pipeline")
+      .populate("assignedRecruiters", "fullName");
 
     if (!workorders || workorders.length === 0) {
       return res.status(404).json({ message: "No workorders found" });
@@ -540,7 +541,7 @@ const getAdminById = async (req, res) => {
 };
 
 const addCandidate = async (req, res) => {
-  const { fullName, email, phone, password } = req.body;
+  const { fullName, email, phone, password, role } = req.body;
   const adminId = req.user.id;
   try {
     const existingUser = await User.findOne({ email });
@@ -555,13 +556,13 @@ const addCandidate = async (req, res) => {
       email,
       phone,
       passwordHash: hashedPassword,
-      role:"candidate",
+      role,
       createdBy: adminId,
     });
 
     return res
       .status(201)
-      .json({ message: "Candidate added successfully..!", candidate });
+      .json({ message: "Added successfully..!", candidate });
   } catch (error) {
     console.error(error.message);
     return res.status(500).json({ message: "Server error" });
@@ -571,6 +572,7 @@ const addCandidate = async (req, res) => {
 const bulkCandidate = async (req, res) => {
   const adminId = req.user.id;
   const candidates = req.body.candidates;
+  const role = req.body.role;
 
   try {
     if (!Array.isArray(candidates) || candidates.length === 0) {
@@ -590,7 +592,7 @@ const bulkCandidate = async (req, res) => {
           email: candidate.email,
           phone: candidate.phone,
           passwordHash: hashedPassword,
-          role: "candidate",
+          role,
           createdBy: adminId,
         };
       })
@@ -605,12 +607,28 @@ const bulkCandidate = async (req, res) => {
     const result = await User.insertMany(filteredCandidates);
 
     return res.status(201).json({
-      message: "Bulk candidates added successfully",
+      message: `Bulk ${role} added successfully`,
       count: result.length,
       candidates: result,
     });
   } catch (error) {
-    console.error("Bulk Candidate Error:", error.message);
+    console.error("Bulk adding Error:", error.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteCandidate = async (req, res) => {
+  const { Id } = req.params;
+  try {
+    const del = await User.findByIdAndDelete(Id);
+    if (!del) {
+      return res.status(404).json({ message: "candidate not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Candidate deleted successfully...!" });
+  } catch (error) {
     return res.status(500).json({ message: "Server error" });
   }
 };
@@ -637,4 +655,5 @@ module.exports = {
   deleteStage,
   addCandidate,
   bulkCandidate,
+  deleteCandidate,
 };

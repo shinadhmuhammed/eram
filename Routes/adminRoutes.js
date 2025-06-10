@@ -1,5 +1,5 @@
 const express = require("express");
-const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById, disableWorkorder, addCandidate, bulkCandidate} = require('../controllers/Admin/adminController');
+const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById, disableWorkorder, addCandidate, bulkCandidate, deleteCandidate} = require('../controllers/Admin/adminController');
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
@@ -48,5 +48,6 @@ adminroute.delete('/deleteStage/:Id',authenticateToken,authorizeRoles("admin"), 
 adminroute.delete('/recruiters/:Id',authenticateToken,authorizeRoles("admin"), deleteRecruiter)
 adminroute.delete('/project/:id',authenticateToken,authorizeRoles("admin"),deleteProject)
 adminroute.delete('/workOrder/:Id',authenticateToken,authorizeRoles("admin"),deleteWorkorder)
+adminroute.delete('/candidate/:Id',authenticateToken,authorizeRoles("admin"),deleteCandidate)
 
 module.exports = adminroute;
