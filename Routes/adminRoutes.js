@@ -45,6 +45,6 @@ adminroute.delete('/deletePipeline/:Id',authenticateToken,authorizeRoles("admin"
 adminroute.delete('/deleteStage/:Id',authenticateToken,authorizeRoles("admin"), deleteStage)
 adminroute.delete('/recruiters/:Id',authenticateToken,authorizeRoles("admin"), deleteRecruiter)
 adminroute.delete('/project/:id',authenticateToken,authorizeRoles("admin"),deleteProject)
-adminroute.delete('/workOrder/:id',authenticateToken,authorizeRoles("admin"),deleteWorkorder)
+adminroute.delete('/workOrder/:Id',authenticateToken,authorizeRoles("admin"),deleteWorkorder)
 
 module.exports = adminroute;
