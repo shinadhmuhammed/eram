@@ -166,7 +166,8 @@ const editWorkOrder = async (req, res) => {
 };
 
 const getWorkorder = async (req, res) => {
-  const adminId = req.user._id;
+  const adminId = req.user.id;
+
   try {
     const workorders = await Workorder.find({createdBy:adminId})
       .populate("project", "name")
