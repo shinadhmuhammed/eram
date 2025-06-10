@@ -1,10 +1,10 @@
 const express = require("express");
-const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById} = require('../controllers/Admin/adminController');
+const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById, disableWorkorder} = require('../controllers/Admin/adminController');
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
 const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter, deleteRecruiter, getRecruiterById } = require("../controllers/Recruiters/recruiterController");
-const { addProject, editProject,deleteProject, getProject, getProjectById,disableProject } = require("../controllers/Project/projectController");
+const { addProject, editProject,deleteProject, getProject, getProjectById,disableProject, deleteWorkorder } = require("../controllers/Project/projectController");
 
 const adminroute = express.Router();
 
@@ -37,6 +37,7 @@ adminroute.put("/projects/:Id",authenticateToken,authorizeRoles("admin"), editPr
 adminroute.patch("/recruiters/:recruiterId",authenticateToken,authorizeRoles("admin"), disableRecruiter);
 adminroute.patch("/project/:projectId",authenticateToken,authorizeRoles("admin"),disableProject)
 adminroute.patch('/publish/:Id',authenticateToken,authorizeRoles("admin"), workorderPublish)
+adminroute.patch('/workOrder/:Id',authenticateToken,authorizeRoles("admin"), disableWorkorder)
 
 
 
@@ -44,6 +45,6 @@ adminroute.delete('/deletePipeline/:Id',authenticateToken,authorizeRoles("admin"
 adminroute.delete('/deleteStage/:Id',authenticateToken,authorizeRoles("admin"), deleteStage)
 adminroute.delete('/recruiters/:Id',authenticateToken,authorizeRoles("admin"), deleteRecruiter)
 adminroute.delete('/project/:id',authenticateToken,authorizeRoles("admin"),deleteProject)
-adminroute.delete('workOrder/:id',authenticateToken,authorizeRoles("admin"),deleteProject)
+adminroute.delete('workOrder/:id',authenticateToken,authorizeRoles("admin"),deleteWorkorder)
 
 module.exports = adminroute;

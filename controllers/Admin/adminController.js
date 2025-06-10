@@ -169,7 +169,7 @@ const getWorkorder = async (req, res) => {
   const adminId = req.user.id;
 
   try {
-    const workorders = await Workorder.find({createdBy:adminId})
+    const workorders = await Workorder.find({ createdBy: adminId })
       .populate("project", "name")
       .populate("pipeline");
 
@@ -206,7 +206,7 @@ const workorderPublish = async (req, res) => {
   try {
     const workOrder = await Workorder.findByIdAndUpdate(
       Id,
-      { workOrderStatus: "published" },
+      { workOrderStatus: "published", isActive: "active" },
       { new: true }
     );
 
@@ -220,6 +220,31 @@ const workorderPublish = async (req, res) => {
   } catch (error) {
     console.error("Error publishing workorder:", error);
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const disableWorkorder = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const workorder = await Workorder.findById(id);
+
+    if (!workorder) {
+      return res.status(404).json({ message: "Workorder not found" });
+    }
+
+    const newStatus = workorder.isActive === "active" ? "inactive" : "active";
+
+    workorder.isActive = newStatus;
+    await workorder.save();
+
+    return res.status(200).json({
+      message: `Workorder is now ${newStatus}`,
+      workorder,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -523,6 +548,7 @@ module.exports = {
   getWorkorder,
   getWorkorderById,
   workorderPublish,
+  disableWorkorder,
   addPipeline,
   editAdmin,
   disableAdmin,
