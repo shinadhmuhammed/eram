@@ -111,7 +111,7 @@ const getProjectById = async (req, res) => {
 const getCandidate = async (req, res) => {
   const adminId = req.user.id;
   try {
-    const getCanidates = await User.find({ createdBy: adminId });
+    const getCanidates = await User.find({ createdBy: adminId ,role:"candidate"});
     if(!getCanidates){
        return res.status(404).json({ message: "canididate not found" });
     }
@@ -221,4 +221,5 @@ module.exports = {
   deleteWorkorder,
   disableProject,
   getCandidate,
+  getCandidateById
 };

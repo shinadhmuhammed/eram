@@ -4,7 +4,7 @@ const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
 const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter, deleteRecruiter, getRecruiterById } = require("../controllers/Recruiters/recruiterController");
-const { addProject, editProject,deleteProject, getProject, getProjectById,disableProject, deleteWorkorder, getCandidate } = require("../controllers/Project/projectController");
+const { addProject, editProject,deleteProject, getProject, getProjectById,disableProject, deleteWorkorder, getCandidate, getCandidateById } = require("../controllers/Project/projectController");
 
 const adminroute = express.Router();
 
@@ -19,6 +19,7 @@ adminroute.get('/workOrder/:Id',authenticateToken, authorizeRoles("admin"), getW
 adminroute.get('/projects',authenticateToken,authorizeRoles("admin"), getProject)
 adminroute.get('/project/:id',authenticateToken,authorizeRoles("admin"),getProjectById)
 adminroute.get('/candidate',authenticateToken,authorizeRoles("admin"),getCandidate)
+adminroute.get('/candidate/:Id',authenticateToken,authorizeRoles("admin"),getCandidateById)
 
 
 
