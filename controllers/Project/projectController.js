@@ -35,7 +35,6 @@ const addProject = async (req, res) => {
   }
 };
 
-
 const editProject = async (req, res) => {
   const { Id } = req.params;
   const { name, prefix, description } = req.body;
@@ -109,6 +108,38 @@ const getProjectById = async (req, res) => {
   }
 };
 
+const getCandidate = async (req, res) => {
+  const adminId = req.user.id;
+  try {
+    const getCanidates = await User.find({ createdBy: adminId });
+    if(!getCanidates){
+       return res.status(404).json({ message: "canididate not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "candidate fetch successfully", getCandidates });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const getCandidateById = async (req, res) => {
+  const { Id } = req.params;
+  try {
+    const candidate = await User.findById(Id);
+    if (!candidate) {
+      return res.status(404).json({ message: "canididate not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "candidate fetch successfully", candidate });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
@@ -148,9 +179,6 @@ const deleteWorkorder = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
 
 const disableProject = async (req, res) => {
   const adminId = req.user.id;
@@ -192,4 +220,5 @@ module.exports = {
   deleteProject,
   deleteWorkorder,
   disableProject,
+  getCandidate,
 };

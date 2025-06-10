@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: String,
     unique: true,
-    required:true
+    required: true,
   },
   passwordHash: String,
   accountStatus: {
@@ -53,13 +53,11 @@ const userSchema = new mongoose.Schema({
   specialization: {
     type: String,
   },
-  qualifications: 
-    {
-      type: String
-    },
+  qualifications: {
+    type: String,
+  },
   skills: [String],
   resumeUrl: String,
-
 
   companyName: String,
   companyWebsite: String,

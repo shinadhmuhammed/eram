@@ -606,6 +606,9 @@ const bulkCandidate = async (req, res) => {
           email: candidate.email,
           phone: candidate.phone,
           passwordHash: hashedPassword,
+          companyName: candidate?.companyName ,
+          specialization: candidate?.specialization ,
+          qualifications:candidate?.qualifications ,
           role,
           createdBy: adminId,
         };
