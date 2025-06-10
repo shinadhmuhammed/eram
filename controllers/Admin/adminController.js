@@ -139,6 +139,8 @@ const createWorkOrder = async (req, res) => {
 const editWorkOrder = async (req, res) => {
   const { id } = req.params;
 
+  console.log(req.body,'hi body')
+
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid work order ID" });
   }

@@ -97,12 +97,14 @@ const workorderSchema = new mongoose.Schema(
       default: "inactive",
     },
     assignedRecruiters: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
+      default: [],
     },
     pipeline: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: "Pipeline",
+      default: [],
       required: true,
     },
     project: {
