@@ -111,13 +111,13 @@ const getProjectById = async (req, res) => {
 const getCandidate = async (req, res) => {
   const adminId = req.user.id;
   try {
-    const getCanidates = await User.find({ createdBy: adminId ,role:"candidate"});
-    if(!getCanidates){
-       return res.status(404).json({ message: "canididate not found" });
+    const getCandidates = await User.find({ createdBy: adminId, role: "candidate" });
+    if(getCandidates.length === 0) {
+      return res.status(404).json({ message: "candidates not found" });
     }
     return res
       .status(200)
-      .json({ message: "candidate fetch successfully", getCandidates });
+      .json({ message: "candidates fetched successfully", getCandidates });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ message: "Internal server error" });
