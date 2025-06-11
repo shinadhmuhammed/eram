@@ -252,15 +252,6 @@ const disableWorkorder = async (req, res) => {
   }
 };
 
-const disableCandidate = async (req, res) => {
-  try {
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
-
 const disablePipeline = async (req, res) => {
   const { Id } = req.params;
   try {
@@ -268,9 +259,11 @@ const disablePipeline = async (req, res) => {
     if (!pipeline) {
       return res.status(404).json({ message: "Pipeline not found" });
     }
-    const newStatus = pipeline.pipelineStatus === "active" ? "inActive" : "active";
+    const newStatus =
+      pipeline.pipelineStatus === "active" ? "inActive" : "active";
     pipeline.pipelineStatus = newStatus;
     await pipeline.save();
+    await clearUserPipelineCache(pipeline.createdBy);
     return res.status(200).json({
       message: `pipeline is now ${newStatus}`,
       pipeline,
@@ -615,7 +608,7 @@ const addCandidate = async (req, res) => {
 };
 
 const editCandidate = async (req, res) => {
-  const Id = req.params.id;
+  const { Id } = req.params;
   const adminId = req.user.id;
 
   const {
@@ -756,7 +749,6 @@ module.exports = {
   getWorkorderById,
   workorderPublish,
   disableWorkorder,
-  disableCandidate,
   addPipeline,
   editAdmin,
   disableAdmin,

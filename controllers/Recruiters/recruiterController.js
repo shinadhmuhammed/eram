@@ -11,10 +11,12 @@ const addRecruiter = async (req, res) => {
       email,
       phoneno,
       specialization,
-      experience,
+      experienceYears,
       password,
       role,
     } = req.body;
+
+    console.log(req.body,'hi expeirence')
 
     const adminId = req.user.id;
     if (!fullName || !email || !phoneno || !password || !adminId) {
@@ -36,7 +38,7 @@ const addRecruiter = async (req, res) => {
       email,
       phone: phoneno,
       specialization,
-      experienceYears: experience,
+      experience:experienceYears,
       role,
       hashedPassword,
       createdBy: adminId,
@@ -62,7 +64,7 @@ const editRecruiter = async (req, res) => {
       email,
       phoneno,
       specialization,
-      experience,
+      experienceYears,
       password,
       role,
     } = req.body;
@@ -82,7 +84,7 @@ const editRecruiter = async (req, res) => {
     if (email) recruiter.email = email;
     if (phoneno) recruiter.phone = phoneno;
     if (specialization) recruiter.specialization = specialization;
-    if (experience) recruiter.experienceYears = experience;
+    if (experienceYears) recruiter.experienceYears = experience;
     if (role) recruiter.role = role;
 
     if (password) {
