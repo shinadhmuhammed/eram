@@ -18,7 +18,7 @@ adminroute.get('/workOrder',authenticateToken, authorizeRoles("admin"), getWorko
 adminroute.get('/workOrder/:Id',authenticateToken, authorizeRoles("admin"), getWorkorderById)
 adminroute.get('/projects',authenticateToken,authorizeRoles("admin"), getProject)
 adminroute.get('/project/:id',authenticateToken,authorizeRoles("admin"),getProjectById)
-adminroute.get('/candidate',authenticateToken,authorizeRoles("admin"),getCandidate)
+adminroute.get('/candidate',authenticateToken,authorizeRoles("admin","recruiter"),getCandidate)
 adminroute.get('/candidate/:Id',authenticateToken,authorizeRoles("admin"),getCandidateById)
 
 
@@ -28,8 +28,8 @@ adminroute.post('/WorkOrder',authenticateToken, authorizeRoles("admin"), createW
 adminroute.post('/addPipeline',authenticateToken,authorizeRoles("admin"), addPipeline )
 adminroute.post('/recruiters',authenticateToken,authorizeRoles("admin"), addRecruiter )
 adminroute.post('/projects',authenticateToken,authorizeRoles("admin"), addProject )
-adminroute.post('/candidate',authenticateToken,authorizeRoles("admin"), addCandidate )
-adminroute.post('/Candidate/bulk',authenticateToken,authorizeRoles("admin"),  bulkCandidate )
+adminroute.post('/candidate',authenticateToken,authorizeRoles("admin","recruiter"), addCandidate )
+adminroute.post('/Candidate/bulk',authenticateToken,authorizeRoles("admin","recruiter"), bulkCandidate )
 
 
 adminroute.put("/editPipeline/:pipelineId",authenticateToken,authorizeRoles("admin"), editPipeline)
@@ -44,7 +44,7 @@ adminroute.patch('/pipeline/:Id',authenticateToken,authorizeRoles("admin"), disa
 adminroute.patch("/project/:projectId",authenticateToken,authorizeRoles("admin"),disableProject)
 adminroute.patch('/publish/:Id',authenticateToken,authorizeRoles("admin"), workorderPublish)
 adminroute.patch('/workOrder/:Id',authenticateToken,authorizeRoles("admin"), disableWorkorder)
-adminroute.patch('/candidate/:Id',authenticateToken,authorizeRoles("admin"), disableCandidate)
+adminroute.patch('/candidate/:Id',authenticateToken,authorizeRoles("admin","recruiter"), disableCandidate)
 
 
 
@@ -53,6 +53,6 @@ adminroute.delete('/deleteStage/:Id',authenticateToken,authorizeRoles("admin"), 
 adminroute.delete('/recruiters/:Id',authenticateToken,authorizeRoles("admin"), deleteRecruiter)
 adminroute.delete('/project/:id',authenticateToken,authorizeRoles("admin"),deleteProject)
 adminroute.delete('/workOrder/:Id',authenticateToken,authorizeRoles("admin"),deleteWorkorder)
-adminroute.delete('/candidate/:Id',authenticateToken,authorizeRoles("admin"),deleteCandidate)
+adminroute.delete('/candidate/:Id',authenticateToken,authorizeRoles("admin","recruiter"),deleteCandidate)
 
 module.exports = adminroute;

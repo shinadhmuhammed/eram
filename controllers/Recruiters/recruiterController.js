@@ -16,8 +16,6 @@ const addRecruiter = async (req, res) => {
       role,
     } = req.body;
 
-    console.log(req.body,'hi expeirence')
-
     const adminId = req.user.id;
     if (!fullName || !email || !phoneno || !password || !adminId) {
       return res.status(400).json({ message: "missing required fields!" });
@@ -135,6 +133,7 @@ const disableRecruiter = async (req, res) => {
 
 const disableCandidate = async (req, res) => {
   const { Id } = req.params;
+  const adminId = req.user.id;
   try {
     const candidateUser = await User.findOne({
       _id: Id,
@@ -148,6 +147,7 @@ const disableCandidate = async (req, res) => {
       candidateUser.accountStatus === "active" ? "inActive" : "active";
 
     candidateUser.accountStatus = newStatus;
+     await clearCandidateCache(adminId);
     await candidateUser.save();
     return res.status(200).json({ message: " Done", data: candidateUser });
   } catch (error) {
@@ -185,7 +185,7 @@ const getRecruiter = async (req, res) => {
 
     const cachedRecruiters = await redisClient.get(recruiterCacheKey);
     if (cachedRecruiters) {
-      return res.status(200).json({ recruiters: JSON.parse(cachedRecruiters) });
+      return res.status(200).json({ message:"redis cache data is showing",recruiters: JSON.parse(cachedRecruiters) });
     }
 
     const recruiters = await User.find({

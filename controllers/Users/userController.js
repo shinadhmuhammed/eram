@@ -79,7 +79,7 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password, branchId } = req.body;
+    const { email, password} = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(403).json({ message: "Invalid Email" });
@@ -90,19 +90,19 @@ const login = async (req, res) => {
       return res.status(403).json({ message: "Invalid Password" });
     }
 
-    if (branchId) {
-      if (!user.branch) {
-        await User.updateOne({ email }, { $set: { branch: branchId } });
-      } else {
-        if (user.branch.toString() !== branchId) {
-          return res
-            .status(403)
-            .json({
-              message: "You cannot log in because your selected branch does not match our records.",
-            });
-        }
-      }
-    }
+    // if (branchId) {
+    //   if (!user.branch) {
+    //     await User.updateOne({ email }, { $set: { branch: branchId } });
+    //   } else {
+    //     if (user.branch.toString() !== branchId) {
+    //       return res
+    //         .status(403)
+    //         .json({
+    //           message: "You cannot log in because your selected branch does not match our records.",
+    //         });
+    //     }
+    //   }
+    // }
 
     const token = jwt.sign(
       {

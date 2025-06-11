@@ -110,9 +110,9 @@ const workorderSchema = new mongoose.Schema(
     pipelineStageTimeline: {
       type: [
         {
-          stageId: { type: mongoose.Schema.Types.ObjectId, required: true },
-          startDate: { type: Date, required: true },
-          endDate: { type: Date, required: true },
+          stageId: { type: mongoose.Schema.Types.ObjectId},
+          startDate: { type: Date},
+          endDate: { type: Date},
         },
       ],
       default: [],

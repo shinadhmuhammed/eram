@@ -1,5 +1,6 @@
 const Branch = require("../../models/branchModel");
 const User = require("../../models/userModel");
+const Workorder = require("../../models/workorderModel");
 const { upload } = require("../../utils/multer");
 const mongoose = require("mongoose");
 
@@ -23,9 +24,9 @@ const createBranch = async (req, res) => {
       } = req.body;
 
       const brand_logo = req.file ? req.file.filename : null;
-      const existingBranches = await Branch.find({})
+      const existingBranches = await Branch.find({});
       const branchLength = existingBranches.length;
-      console.log(branchLength, 'branch')
+      console.log(branchLength, "branch");
 
       if (
         !name ||
@@ -63,7 +64,7 @@ const createBranch = async (req, res) => {
           email: contact.email || "",
           phone: contact.phone || "",
         },
-        branchOrder: branchLength + 1
+        branchOrder: branchLength + 1,
       });
 
       await newBranch.save();
@@ -79,8 +80,6 @@ const createBranch = async (req, res) => {
   });
 };
 
-
-
 const getBranch = async (req, res) => {
   try {
     const branch = await Branch.find({});
@@ -91,17 +90,55 @@ const getBranch = async (req, res) => {
   }
 };
 
-const getjobByBranchID = async (req,res) => {
-  const email = req.user.email;
+const getjobByBranchID = async (req, res) => {
+  const userEmail = req.user.email;
   try {
-    const user = await User.find({email:email})
+    const candidate = await User.findOne({
+      email: userEmail,
+      role: "candidate",
+    });
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
 
-    const jobPosts = await Branch.find({})
+    const adminId = candidate.createdBy;
+    const admin = await User.findOne({ _id: adminId, role: "admin" });
+
+    if (!admin || !admin.branch) {
+      return res.status(404).json({ message: "Admin or branch not found" });
+    }
+
+    const branchId = admin.branch;
+    const workorders = await Workorder.aggregate([
+      {
+        $match: {
+          branch: branchId,
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+    ]);
+
+    if (!workorders || workorders.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No workorders found for this branch" });
+    }
+
+    return res.status(200).json({
+      message: "Workorders fetched successfully",
+      workorders,
+    });
   } catch (error) {
-    console.error(error)
-    return res.status(500).json({message: "Internal server error. cant get the job posts"})
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error. cant get the job posts" });
   }
-}
+};
 
 const editBranch = async (req, res) => {
   upload(req, res, async (err) => {
@@ -150,18 +187,15 @@ const editBranch = async (req, res) => {
         .json({ message: "Branch updated successfully", data: branch });
     } catch (error) {
       console.error("Error editing branch:", error.message);
-      return res
-        .status(500)
-        .json({
-          message: "Server error while editing branch",
-          error: error.message,
-        });
+      return res.status(500).json({
+        message: "Server error while editing branch",
+        error: error.message,
+      });
     }
   });
 };
 
 const deleteBranch = async (req, res) => {
-
   const branchId = req.params.branchId;
 
   try {
@@ -192,7 +226,6 @@ const deleteBranch = async (req, res) => {
   }
 };
 
-
 const getBranchById = async (req, res) => {
   try {
     const { branchId } = req.params;
@@ -203,12 +236,10 @@ const getBranchById = async (req, res) => {
     return res.status(200).json({ branch: newBranch });
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({
-        message: "Server error while getting the  branch",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "Server error while getting the  branch",
+      error: error.message,
+    });
   }
 };
 

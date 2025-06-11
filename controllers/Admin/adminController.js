@@ -4,7 +4,10 @@ const Workorder = require("../../models/workorderModel");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const redisClient = require("../../utils/redisClient");
-const { clearUserPipelineCache } = require("../../utils/cache");
+const {
+  clearUserPipelineCache,
+  clearCandidateCache,
+} = require("../../utils/cache");
 const addAdmin = async (req, res) => {
   try {
     const {
@@ -141,8 +144,6 @@ const createWorkOrder = async (req, res) => {
 const editWorkOrder = async (req, res) => {
   const { id } = req.params;
 
-  console.log(req.body, "hi body");
-
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid work order ID" });
   }
@@ -191,7 +192,10 @@ const getWorkorder = async (req, res) => {
 const getWorkorderById = async (req, res) => {
   const { Id } = req.params;
   try {
-    const workOrder = await Workorder.findById(Id);
+    const workOrder = await Workorder.findById(Id)
+      .populate("project", "name")
+      .populate("pipeline", "name")
+      .populate("assignedRecruiters", "fullName");
     if (!workOrder) {
       return res.status(404).json({ message: "Work order not found" });
     }
@@ -315,9 +319,10 @@ const getPipeline = async (req, res) => {
     const cacheKey = `all_pipelines:${userId}`;
     const cachedPipelines = await redisClient.get(cacheKey);
     if (cachedPipelines) {
-      return res
-        .status(200)
-        .json({ allPipelines: JSON.parse(cachedPipelines) });
+      return res.status(200).json({
+        message: "redis cache pipeline is fetched",
+        allPipelines: JSON.parse(cachedPipelines),
+      });
     }
 
     const allPipelines = await Pipeline.find({ createdBy: userId });
@@ -659,7 +664,7 @@ const editCandidate = async (req, res) => {
     candidate.updatedBy = adminId;
 
     await candidate.save();
-
+    await clearCandidateCache(adminId);
     return res
       .status(200)
       .json({ message: "Candidate updated successfully", candidate });
@@ -724,11 +729,14 @@ const bulkCandidate = async (req, res) => {
 
 const deleteCandidate = async (req, res) => {
   const { Id } = req.params;
+  const adminId = req.user.id;
   try {
     const del = await User.findByIdAndDelete(Id);
     if (!del) {
       return res.status(404).json({ message: "candidate not found" });
     }
+
+    await clearCandidateCache(adminId);
 
     return res
       .status(200)

@@ -2,6 +2,7 @@ const Project = require("../../models/projectModel");
 const mongoose = require("mongoose");
 const Workorder = require("../../models/workorderModel");
 const User = require("../../models/userModel");
+const redisClient = require("../../utils/redisClient");
 
 const addProject = async (req, res) => {
   const { name, prefix, description } = req.body;
@@ -110,11 +111,27 @@ const getProjectById = async (req, res) => {
 
 const getCandidate = async (req, res) => {
   const adminId = req.user.id;
+  const redisKey = `candidates:${adminId}`;
   try {
-    const getCandidates = await User.find({ createdBy: adminId, role: "candidate" });
-    if(getCandidates.length === 0) {
+    const cachedCandidates = await redisClient.get(redisKey);
+
+    if (cachedCandidates) {
+      return res.status(200).json({
+        message: "candidates fetched successfully (from cache)",
+        getCandidates: JSON.parse(cachedCandidates),
+      });
+    }
+
+    const getCandidates = await User.find({
+      createdBy: adminId,
+      role: "candidate",
+    });
+    if (getCandidates.length === 0) {
       return res.status(404).json({ message: "candidates not found" });
     }
+    await redisClient.set(redisKey, JSON.stringify(getCandidates), {
+      EX: 3600,
+    });
     return res
       .status(200)
       .json({ message: "candidates fetched successfully", getCandidates });
@@ -221,5 +238,5 @@ module.exports = {
   deleteWorkorder,
   disableProject,
   getCandidate,
-  getCandidateById
+  getCandidateById,
 };
