@@ -5,7 +5,10 @@ const authorizeRoles = require("../middleware/authorizedRoles");
 const { editJobpost } = require("../controllers/Recruiters/recruiterController");
 
 
+recruiterroute.post('/recruiter/:Id',authenticateToken,authorizeRoles("recruiter"),editJobpost)
+
 recruiterroute.put('/recruiter/:Id',authenticateToken,authorizeRoles("recruiter"),editJobpost)
+
 
 
 

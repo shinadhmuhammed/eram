@@ -20,6 +20,7 @@ const addAdmin = async (req, res) => {
       phone,
       cPassword,
     } = req.body;
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -36,7 +37,7 @@ const addAdmin = async (req, res) => {
       role,
       email,
       phone,
-      hashedPassword,
+      passwordHash:hashedPassword,
       branch: branchId,
     });
 
