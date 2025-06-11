@@ -615,7 +615,7 @@ const addCandidate = async (req, res) => {
 };
 
 const editCandidate = async (req, res) => {
-  const candidateId = req.params.id;
+  const Id = req.params.id;
   const adminId = req.user.id;
 
   const {
