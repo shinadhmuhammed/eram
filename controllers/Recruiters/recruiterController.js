@@ -84,7 +84,7 @@ const editRecruiter = async (req, res) => {
     if (email) recruiter.email = email;
     if (phoneno) recruiter.phone = phoneno;
     if (specialization) recruiter.specialization = specialization;
-    if (experienceYears) recruiter.experienceYears = experience;
+    if (experienceYears) recruiter.experience = experienceYears;
     if (role) recruiter.role = role;
 
     if (password) {
