@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   qualifications: {
-    type: String,
+    type: [String],
   },
   skills: [String],
   resumeUrl: String,

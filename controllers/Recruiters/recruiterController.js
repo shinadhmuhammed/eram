@@ -103,7 +103,7 @@ const editRecruiter = async (req, res) => {
 };
 
 const disableRecruiter = async (req, res) => {
-  const adminId = req.user.id
+  const adminId = req.user.id;
   try {
     const { recruiterId } = req.params;
 
@@ -125,6 +125,29 @@ const disableRecruiter = async (req, res) => {
     return res
       .status(200)
       .json({ message: "Admin marked as disabled", data: recruiterUser });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+const disableCandidate = async (req, res) => {
+  const { Id } = req.params;
+  try {
+    const candidateUser = await User.findOne({
+      _id: Id,
+      role: "candidate",
+    });
+    if (!candidateUser) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    const newStatus =
+      candidateUser.accountStatus === "active" ? "inActive" : "active";
+
+    candidateUser.accountStatus = newStatus;
+    await candidateUser.save();
+    return res.status(200).json({ message: " Done", data: candidateUser });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error" });
@@ -179,17 +202,16 @@ const getRecruiter = async (req, res) => {
   }
 };
 
-
 const getRecruiterById = async (req, res) => {
-  const { Id } = req.params
+  const { Id } = req.params;
   try {
-    const recruiter = await User.findOne({ _id: Id, role: "recruiter" })
+    const recruiter = await User.findOne({ _id: Id, role: "recruiter" });
     return res.status(200).json({ recruiter });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ message: "server error" });
   }
-}
+};
 
 const editJobpost = async (req, res) => {
   const { Id } = req.params;
@@ -228,5 +250,6 @@ module.exports = {
   getRecruiter,
   getRecruiterById,
   disableRecruiter,
+  disableCandidate,
   editJobpost,
 };

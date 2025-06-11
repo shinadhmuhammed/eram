@@ -603,6 +603,64 @@ const addCandidate = async (req, res) => {
   }
 };
 
+const editCandidate = async (req, res) => {
+  const candidateId = req.params.id;
+  const adminId = req.user.id;
+
+  const {
+    fullName,
+    email,
+    phone,
+    password,
+    role,
+    companyName,
+    specialization,
+    qualifications,
+    experience,
+  } = req.body;
+
+  try {
+    const candidate = await User.findOne({ _id: candidateId, role: "candidate" });
+
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    if (email && email !== candidate.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already registered by another user" });
+      }
+    }
+
+    candidate.fullName = fullName || candidate.fullName;
+    candidate.email = email || candidate.email;
+    candidate.phone = phone || candidate.phone;
+    candidate.role = role || candidate.role;
+    candidate.companyName = companyName || candidate.companyName;
+    candidate.specialization = specialization || candidate.specialization;
+    candidate.qualifications = qualifications || candidate.qualifications;
+    candidate.experience = experience || candidate.experience;
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      candidate.passwordHash = await bcrypt.hash(password, salt);
+    }
+
+    candidate.updatedBy = adminId;
+
+    await candidate.save();
+
+    return res.status(200).json({ message: "Candidate updated successfully", candidate });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).json({ message: "Server error while updating candidate" });
+  }
+};
+
+
+
+
 const bulkCandidate = async (req, res) => {
   const adminId = req.user.id;
   const candidates = req.body.candidates;
@@ -692,6 +750,7 @@ module.exports = {
   editStage,
   deleteStage,
   addCandidate,
+  editCandidate,
   bulkCandidate,
   deleteCandidate,
 };
