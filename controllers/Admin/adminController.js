@@ -268,8 +268,8 @@ const disablePipeline = async (req, res) => {
     if (!pipeline) {
       return res.status(404).json({ message: "Pipeline not found" });
     }
-    const newStatus = pipeline.isActive === "active" ? "inactive" : "active";
-    pipeline.isActive = newStatus;
+    const newStatus = pipeline.pipelineStatus === "active" ? "inActive" : "active";
+    pipeline.pipelineStatus = newStatus;
     await pipeline.save();
     return res.status(200).json({
       message: `pipeline is now ${newStatus}`,
