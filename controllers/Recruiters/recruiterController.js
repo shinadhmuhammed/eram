@@ -245,13 +245,13 @@ const editJobpost = async (req, res) => {
   }
 };
 
-// const getAllRecruiter = async(req,res) => {
-//   try {
+const getAllRecruiterJobs = async(req,res) => {
+  try {
     
-//   } catch (error) {
-//     console.error(error)
-//   }
-// }
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 module.exports = {
   addRecruiter,
@@ -262,5 +262,5 @@ module.exports = {
   disableRecruiter,
   disableCandidate,
   editJobpost,
-  getAllRecruiter
+  getAllRecruiterJobs
 };
