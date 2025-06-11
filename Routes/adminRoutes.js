@@ -3,7 +3,7 @@ const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeli
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
-const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter, deleteRecruiter, getRecruiterById } = require("../controllers/Recruiters/recruiterController");
+const { addRecruiter, getRecruiter, editRecruiter, disableRecruiter, deleteRecruiter, getRecruiterById,disableCandidate } = require("../controllers/Recruiters/recruiterController");
 const { addProject, editProject,deleteProject, getProject, getProjectById,disableProject, deleteWorkorder, getCandidate, getCandidateById } = require("../controllers/Project/projectController");
 
 const adminroute = express.Router();
@@ -44,6 +44,7 @@ adminroute.patch('/pipeline/:Id',authenticateToken,authorizeRoles("admin"), disa
 adminroute.patch("/project/:projectId",authenticateToken,authorizeRoles("admin"),disableProject)
 adminroute.patch('/publish/:Id',authenticateToken,authorizeRoles("admin"), workorderPublish)
 adminroute.patch('/workOrder/:Id',authenticateToken,authorizeRoles("admin"), disableWorkorder)
+adminroute.patch('/candidate/:Id',authenticateToken,authorizeRoles("admin"), disableCandidate)
 
 
 

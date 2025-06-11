@@ -76,6 +76,7 @@ const createWorkOrder = async (req, res) => {
       salaryType,
       annualSalary,
       pipeline,
+      pipelineStageTimeline,
       startDate,
       endDate,
       deadlineDate,
@@ -113,6 +114,7 @@ const createWorkOrder = async (req, res) => {
       alertDate,
       assignedRecruiters: assignedId,
       pipeline,
+      pipelineStageTimeline,
       project,
       branch: branchId,
       requiredSkills,
@@ -250,17 +252,26 @@ const disableWorkorder = async (req, res) => {
   }
 };
 
+const disableCandidate = async (req, res) => {
+  try {
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const disablePipeline = async (req, res) => {
   const { Id } = req.params;
   try {
-    const pipeline = await Workorder.findById(Id);
-    if(!pipeline){
-       return res.status(404).json({ message: "Pipeline not found" });
+    const pipeline = await Pipeline.findById(Id);
+    if (!pipeline) {
+      return res.status(404).json({ message: "Pipeline not found" });
     }
-    const newStatus = pipeline.isActive === "active" ? "inactive" : "active" ;
-    pipeline.isActive = newStatus
+    const newStatus = pipeline.isActive === "active" ? "inactive" : "active";
+    pipeline.isActive = newStatus;
     await pipeline.save();
-        return res.status(200).json({
+    return res.status(200).json({
       message: `pipeline is now ${newStatus}`,
       pipeline,
     });
@@ -620,7 +631,10 @@ const editCandidate = async (req, res) => {
   } = req.body;
 
   try {
-    const candidate = await User.findOne({ _id: candidateId, role: "candidate" });
+    const candidate = await User.findOne({
+      _id: candidateId,
+      role: "candidate",
+    });
 
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
@@ -629,7 +643,9 @@ const editCandidate = async (req, res) => {
     if (email && email !== candidate.email) {
       const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ message: "Email already registered by another user" });
+        return res
+          .status(400)
+          .json({ message: "Email already registered by another user" });
       }
     }
 
@@ -651,15 +667,16 @@ const editCandidate = async (req, res) => {
 
     await candidate.save();
 
-    return res.status(200).json({ message: "Candidate updated successfully", candidate });
+    return res
+      .status(200)
+      .json({ message: "Candidate updated successfully", candidate });
   } catch (error) {
     console.error(error.message);
-    return res.status(500).json({ message: "Server error while updating candidate" });
+    return res
+      .status(500)
+      .json({ message: "Server error while updating candidate" });
   }
 };
-
-
-
 
 const bulkCandidate = async (req, res) => {
   const adminId = req.user.id;
@@ -739,6 +756,7 @@ module.exports = {
   getWorkorderById,
   workorderPublish,
   disableWorkorder,
+  disableCandidate,
   addPipeline,
   editAdmin,
   disableAdmin,
