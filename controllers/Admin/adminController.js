@@ -632,7 +632,7 @@ const editCandidate = async (req, res) => {
 
   try {
     const candidate = await User.findOne({
-      _id: candidateId,
+      _id: Id,
       role: "candidate",
     });
 
