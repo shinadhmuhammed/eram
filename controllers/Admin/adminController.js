@@ -250,6 +250,26 @@ const disableWorkorder = async (req, res) => {
   }
 };
 
+const disablePipeline = async (req, res) => {
+  const { Id } = req.params;
+  try {
+    const pipeline = await Workorder.findById(Id);
+    if(!pipeline){
+       return res.status(404).json({ message: "Pipeline not found" });
+    }
+    const newStatus = pipeline.isActive === "active" ? "inactive" : "active" ;
+    pipeline.isActive = newStatus
+    await pipeline.save();
+        return res.status(200).json({
+      message: `pipeline is now ${newStatus}`,
+      pipeline,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const editStage = async (req, res) => {
   const { Id: stageId } = req.params;
   const { name, order, description, requiredDocuments } = req.body;
@@ -606,9 +626,9 @@ const bulkCandidate = async (req, res) => {
           email: candidate.email,
           phone: candidate.phone,
           passwordHash: hashedPassword,
-          companyName: candidate?.companyName ,
-          specialization: candidate?.specialization ,
-          qualifications:candidate?.qualifications ,
+          companyName: candidate?.companyName,
+          specialization: candidate?.specialization,
+          qualifications: candidate?.qualifications,
           role,
           createdBy: adminId,
         };
@@ -668,6 +688,7 @@ module.exports = {
   editWorkOrder,
   editPipeline,
   deletePipeline,
+  disablePipeline,
   editStage,
   deleteStage,
   addCandidate,

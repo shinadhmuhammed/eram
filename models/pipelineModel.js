@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const pipelineSchema = new mongoose.Schema({
   name: {
@@ -12,7 +12,7 @@ const pipelineSchema = new mongoose.Schema({
         required: true,
       },
       order: {
-        type: Number, 
+        type: Number,
         required: true,
       },
       description: {
@@ -23,15 +23,20 @@ const pipelineSchema = new mongoose.Schema({
           type: String,
         },
       ],
-    }
+    },
   ],
+  pipelineStatus: {
+    type: String,
+    enum: ["active", "inActive"],
+    default: "active",
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
-    index:true
-  }
+    index: true,
+  },
 });
 
-const Pipeline = mongoose.model('Pipeline', pipelineSchema);
+const Pipeline = mongoose.model("Pipeline", pipelineSchema);
 module.exports = Pipeline;

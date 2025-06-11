@@ -1,5 +1,5 @@
 const express = require("express");
-const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById, disableWorkorder, addCandidate, bulkCandidate, deleteCandidate} = require('../controllers/Admin/adminController');
+const {  createWorkOrder, addPipeline, editWorkOrder, editPipeline, deletePipeline, getPipeline, getPipelineById, editStage, deleteStage, adminBranches, getWorkorder, workorderPublish, getWorkorderById, disableWorkorder, addCandidate, bulkCandidate, deleteCandidate, disablePipeline} = require('../controllers/Admin/adminController');
 const { login } = require("../controllers/Users/userController");
 const authenticateToken = require("../middleware/jwtMiddleware");
 const authorizeRoles = require("../middleware/authorizedRoles");
@@ -11,7 +11,7 @@ const adminroute = express.Router();
 
 adminroute.get('/Pipeline',authenticateToken, authorizeRoles("admin"), getPipeline )
 adminroute.get('/recruiters',authenticateToken, authorizeRoles("admin"), getRecruiter )
-adminroute.get('/recruiters/:id',authenticateToken, authorizeRoles("admin"), getRecruiterById )
+adminroute.get('/recruiters/:Id',authenticateToken, authorizeRoles("admin"), getRecruiterById )
 adminroute.get('/Pipeline/:piplineId',authenticateToken, authorizeRoles("admin"), getPipelineById )
 adminroute.get('/branches',authenticateToken, authorizeRoles("admin"), adminBranches )
 adminroute.get('/workOrder',authenticateToken, authorizeRoles("admin"), getWorkorder )
@@ -42,6 +42,7 @@ adminroute.patch("/recruiters/:recruiterId",authenticateToken,authorizeRoles("ad
 adminroute.patch("/project/:projectId",authenticateToken,authorizeRoles("admin"),disableProject)
 adminroute.patch('/publish/:Id',authenticateToken,authorizeRoles("admin"), workorderPublish)
 adminroute.patch('/workOrder/:Id',authenticateToken,authorizeRoles("admin"), disableWorkorder)
+adminroute.patch('/pipeline/:Id',authenticateToken,authorizeRoles("admin"), disablePipeline)
 
 
 

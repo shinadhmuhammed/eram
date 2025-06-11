@@ -184,7 +184,6 @@ const getRecruiterById = async (req, res) => {
   const { Id } = req.params
   try {
     const recruiter = await User.findOne({ _id: Id, role: "recruiter" })
-    console.log(recruiter,'recruiter')
     return res.status(200).json({ recruiter });
   } catch (error) {
     console.log(error.message);
