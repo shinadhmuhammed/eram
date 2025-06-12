@@ -13,9 +13,10 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: "https://eram-frontend-lilac.vercel.app/",
+  origin: "https://eram-frontend-lilac.vercel.app",
   credentials: true,
 }));
+
 
 app.use(cookieParser());
 app.use(express.json());
