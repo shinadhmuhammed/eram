@@ -79,7 +79,7 @@ const verifyOtp = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password} = req.body;
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(403).json({ message: "Invalid Email" });
@@ -146,8 +146,8 @@ const login = async (req, res) => {
 
     res.cookie(user.role, token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -206,8 +206,8 @@ const verifyAdminLoginOtp = async (req, res) => {
 
     res.cookie("super_admin", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -316,10 +316,10 @@ const verifyUpdateProfile = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.cookie(user.role, newToken, {
+    res.cookie(user.role, token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
