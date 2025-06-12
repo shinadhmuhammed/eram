@@ -111,16 +111,16 @@ const getProjectById = async (req, res) => {
 
 const getCandidate = async (req, res) => {
   const adminId = req.user.id;
-  const redisKey = `candidates:${adminId}`;
+  // const redisKey = `candidates:${adminId}`;
   try {
-    const cachedCandidates = await redisClient.get(redisKey);
+    // const cachedCandidates = await redisClient.get(redisKey);
 
-    if (cachedCandidates) {
-      return res.status(200).json({
-        message: "candidates fetched successfully (from cache)",
-        getCandidates: JSON.parse(cachedCandidates),
-      });
-    }
+    // if (cachedCandidates) {
+    //   return res.status(200).json({
+    //     message: "candidates fetched successfully (from cache)",
+    //     getCandidates: JSON.parse(cachedCandidates),
+    //   });
+    // }
 
     const getCandidates = await User.find({
       createdBy: adminId,
@@ -129,9 +129,9 @@ const getCandidate = async (req, res) => {
     if (getCandidates.length === 0) {
       return res.status(404).json({ message: "candidates not found" });
     }
-    await redisClient.set(redisKey, JSON.stringify(getCandidates), {
-      EX: 3600,
-    });
+    // await redisClient.set(redisKey, JSON.stringify(getCandidates), {
+    //   EX: 3600,
+    // });
     return res
       .status(200)
       .json({ message: "candidates fetched successfully", getCandidates });

@@ -43,7 +43,7 @@ const addRecruiter = async (req, res) => {
     });
 
     await newRecruiter.save();
-    await clearRecruiterCache(adminId);
+    // await clearRecruiterCache(adminId);
 
     res
       .status(201)
@@ -91,7 +91,7 @@ const editRecruiter = async (req, res) => {
     }
 
     await recruiter.save();
-    await clearRecruiterCache(adminId);
+    // await clearRecruiterCache(adminId);
 
     return res
       .status(200)
@@ -120,7 +120,7 @@ const disableRecruiter = async (req, res) => {
 
     recruiterUser.accountStatus = newStatus;
     await recruiterUser.save();
-    await clearRecruiterCache(adminId);
+    // await clearRecruiterCache(adminId);
 
     return res
       .status(200)
@@ -168,7 +168,7 @@ const deleteRecruiter = async (req, res) => {
     }
 
     await User.findByIdAndDelete(Id);
-    await clearRecruiterCache(adminId);
+    // await clearRecruiterCache(adminId);
 
     return res.status(200).json({ message: "Recruiter deleted successfully" });
   } catch (error) {
@@ -181,21 +181,21 @@ const getRecruiter = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const recruiterCacheKey = `recruiters:${userId}`;
+    // const recruiterCacheKey = `recruiters:${userId}`;
 
-    const cachedRecruiters = await redisClient.get(recruiterCacheKey);
-    if (cachedRecruiters) {
-      return res.status(200).json({ message:"redis cache data is showing",recruiters: JSON.parse(cachedRecruiters) });
-    }
+    // const cachedRecruiters = await redisClient.get(recruiterCacheKey);
+    // if (cachedRecruiters) {
+    //   return res.status(200).json({ message:"redis cache data is showing",recruiters: JSON.parse(cachedRecruiters) });
+    // }
 
     const recruiters = await User.find({
       role: "recruiter",
       createdBy: userId,
     });
 
-    await redisClient.set(recruiterCacheKey, JSON.stringify(recruiters), {
-      EX: 60 * 5,
-    });
+    // await redisClient.set(recruiterCacheKey, JSON.stringify(recruiters), {
+    //   EX: 60 * 5,
+    // });
 
     return res.status(200).json({ recruiters });
   } catch (error) {
@@ -246,10 +246,12 @@ const editJobpost = async (req, res) => {
 };
 
 const getAllRecruiterJobs = async(req,res) => {
+  const reqruiterId = req.user.id
   try {
     
   } catch (error) {
     console.error(error)
+    return res.status(500).json({ message: "server error" });
   }
 }
 

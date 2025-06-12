@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const redisClient = require("../../utils/redisClient");
 const {
   clearUserPipelineCache,
-  clearCandidateCache,
+  // clearCandidateCache,
 } = require("../../utils/cache");
 const addAdmin = async (req, res) => {
   try {
@@ -268,7 +268,7 @@ const disablePipeline = async (req, res) => {
       pipeline.pipelineStatus === "active" ? "inActive" : "active";
     pipeline.pipelineStatus = newStatus;
     await pipeline.save();
-    await clearUserPipelineCache(pipeline.createdBy);
+    // await clearUserPipelineCache(pipeline.createdBy);
     return res.status(200).json({
       message: `pipeline is now ${newStatus}`,
       pipeline,
@@ -302,7 +302,7 @@ const editStage = async (req, res) => {
     if (requiredDocuments) stage.requiredDocuments = requiredDocuments;
 
     await pipeline.save();
-    await clearUserPipelineCache(pipeline.createdBy);
+    // await clearUserPipelineCache(pipeline.createdBy);
 
     return res
       .status(200)
@@ -317,19 +317,19 @@ const getPipeline = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const cacheKey = `all_pipelines:${userId}`;
-    const cachedPipelines = await redisClient.get(cacheKey);
-    if (cachedPipelines) {
-      return res.status(200).json({
-        message: "redis cache pipeline is fetched",
-        allPipelines: JSON.parse(cachedPipelines),
-      });
-    }
+    // const cacheKey = `all_pipelines:${userId}`;
+    // const cachedPipelines = await redisClient.get(cacheKey);
+    // if (cachedPipelines) {
+    //   return res.status(200).json({
+    //     message: "redis cache pipeline is fetched",
+    //     allPipelines: JSON.parse(cachedPipelines),
+    //   });
+    // }
 
     const allPipelines = await Pipeline.find({ createdBy: userId });
-    await redisClient.set(cacheKey, JSON.stringify(allPipelines), {
-      EX: 60 * 5,
-    });
+    // await redisClient.set(cacheKey, JSON.stringify(allPipelines), {
+    //   EX: 60 * 5,
+    // });
 
     return res.status(200).json({ allPipelines });
   } catch (error) {
@@ -410,7 +410,7 @@ const addPipeline = async (req, res) => {
     });
 
     await newPipeLine.save();
-    await clearUserPipelineCache(createdBy);
+    // await clearUserPipelineCache(createdBy);
 
     return res
       .status(200)
@@ -437,7 +437,7 @@ const editPipeline = async (req, res) => {
     }
 
     await existingPipeline.save();
-    await clearUserPipelineCache(existingPipeline.createdBy);
+    // await clearUserPipelineCache(existingPipeline.createdBy);
 
     return res.status(200).json({
       message: "Pipeline updated successfully",
@@ -453,7 +453,7 @@ const deletePipeline = async (req, res) => {
   const { Id } = req.params;
   try {
     const pipelineDelete = await Pipeline.findByIdAndDelete({ _id: Id });
-    await clearUserPipelineCache(pipelineDelete.createdBy);
+    // await clearUserPipelineCache(pipelineDelete.createdBy);
     return res.status(200).json({ message: "Deleted Successfully..!" });
   } catch (error) {
     console.error(error);
@@ -477,7 +477,7 @@ const deleteStage = async (req, res) => {
       (stage) => stage._id.toString() !== stageId
     );
     await pipeline.save();
-    await clearUserPipelineCache(pipeline.createdBy);
+    // await clearUserPipelineCache(pipeline.createdBy);
 
     return res
       .status(200)
@@ -665,7 +665,7 @@ const editCandidate = async (req, res) => {
     candidate.updatedBy = adminId;
 
     await candidate.save();
-    await clearCandidateCache(adminId);
+    // await clearCandidateCache(adminId);
     return res
       .status(200)
       .json({ message: "Candidate updated successfully", candidate });
@@ -737,7 +737,7 @@ const deleteCandidate = async (req, res) => {
       return res.status(404).json({ message: "candidate not found" });
     }
 
-    await clearCandidateCache(adminId);
+    // await clearCandidateCache(adminId);
 
     return res
       .status(200)
